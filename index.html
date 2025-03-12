@@ -79,6 +79,20 @@
                         <div class="app-name">Контакты</div>
                         <div class="app-badge"></div>
                     </div>
+                    <div class="app" data-app="messages">
+                        <div class="app-icon messages-icon">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                        <div class="app-name">Сообщения</div>
+                        <div class="app-badge"></div>
+                    </div>
+                    <div class="app" data-app="chrome">
+                        <div class="app-icon chrome-icon">
+                            <i class="fab fa-chrome"></i>
+                        </div>
+                        <div class="app-name">Chrome</div>
+                        <div class="app-badge"></div>
+                    </div>
                 </div>
                 <!-- Добавляем Dock-панель на домашний экран -->
                 <div class="dock-container">
@@ -438,6 +452,104 @@
                 <button class="add-contact-button">
                     <i class="fas fa-plus"></i>
                 </button>
+            </div>
+
+            <!-- Добавляем экран приложения "Сообщения" -->
+            <div class="screen-content messages-screen">
+                <div class="app-header messages-header">
+                    <button class="home-button-app"><i class="fas fa-home"></i></button>
+                    <h2>Сообщения</h2>
+                </div>
+                <div class="messages-list">
+                    <!-- Сообщения будут добавлены через JavaScript -->
+                </div>
+                <button class="new-message-button">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+
+            <!-- Добавляем экран приложения "Chrome" -->
+            <div class="screen-content chrome-screen">
+                <div class="app-header chrome-header">
+                    <button class="home-button-app"><i class="fas fa-home"></i></button>
+                    <h2>Chrome</h2>
+                </div>
+                <div class="chrome-address-bar">
+                    <i class="fas fa-lock"></i>
+                    <input type="text" placeholder="Поиск или введите URL">
+                </div>
+                <div class="chrome-content">
+                    <div class="chrome-bookmarks">
+                        <div class="bookmark-item">
+                            <div class="bookmark-icon" style="background-color: #4285f4;">
+                                <i class="fab fa-google" style="color: white;"></i>
+                            </div>
+                            <div class="bookmark-name">Google</div>
+                        </div>
+                        <div class="bookmark-item">
+                            <div class="bookmark-icon" style="background-color: #ff0000;">
+                                <i class="fab fa-youtube" style="color: white;"></i>
+                            </div>
+                            <div class="bookmark-name">YouTube</div>
+                        </div>
+                        <div class="bookmark-item">
+                            <div class="bookmark-icon" style="background-color: #3b5998;">
+                                <i class="fab fa-vk" style="color: white;"></i>
+                            </div>
+                            <div class="bookmark-name">ВКонтакте</div>
+                        </div>
+                        <div class="bookmark-item">
+                            <div class="bookmark-icon" style="background-color: #ff6600;">
+                                <i class="fas fa-gamepad" style="color: white;"></i>
+                            </div>
+                            <div class="bookmark-name">Игры</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chrome-history">
+                        <div class="history-title">История</div>
+                        <div class="history-item">
+                            <div class="history-icon">
+                                <i class="fab fa-youtube" style="color: #ff0000;"></i>
+                            </div>
+                            <div class="history-content">
+                                <div class="history-name">Как скачать бесплатно Minecraft</div>
+                                <div class="history-url">youtube.com</div>
+                            </div>
+                            <div class="history-time">Сегодня, 10:30</div>
+                        </div>
+                        <div class="history-item">
+                            <div class="history-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="history-content">
+                                <div class="history-name">читы на роблокс бесплатно</div>
+                                <div class="history-url">google.com</div>
+                            </div>
+                            <div class="history-time">Сегодня, 09:15</div>
+                        </div>
+                        <div class="history-item">
+                            <div class="history-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="history-content">
+                                <div class="history-name">как стать хакером за 5 минут</div>
+                                <div class="history-url">google.com</div>
+                            </div>
+                            <div class="history-time">Вчера, 18:45</div>
+                        </div>
+                        <div class="history-item">
+                            <div class="history-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="history-content">
+                                <div class="history-name">как взломать игру на деньги</div>
+                                <div class="history-url">google.com</div>
+                            </div>
+                            <div class="history-time">Вчера, 17:20</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         

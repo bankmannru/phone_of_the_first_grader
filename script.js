@@ -2723,3 +2723,303 @@ function initUI() {
 document.addEventListener('DOMContentLoaded', () => {
     initUI();
 });
+
+// Инициализация приложения "Сообщения"
+function initMessages() {
+    const messagesList = document.querySelector('.messages-list');
+    if (!messagesList) return;
+    
+    // Очищаем список сообщений
+    messagesList.innerHTML = '';
+    
+    // Массив сообщений
+    const messages = [
+        { name: "Мама", text: "Как дела в школе?", time: "10:15", avatar: "👩", unread: 2 },
+        { name: "Папа", text: "Не забудь про уроки!", time: "09:30", avatar: "👨", unread: 0 },
+        { name: "Бабушка", text: "Кушал ли ты сегодня?", time: "Вчера", avatar: "👵", unread: 1 },
+        { name: "Учитель", text: "Домашнее задание на завтра: стр. 15, упр. 3", time: "Вчера", avatar: "👩‍🏫", unread: 0 },
+        { name: "Петя", text: "Го в майнкрафт играть после школы", time: "08:45", avatar: "👦", unread: 0 },
+        { name: "Маша", text: "Дай списать домашку по матеше", time: "Вчера", avatar: "👧", unread: 0 },
+        { name: "Неизвестный номер", text: "Привет! Я выиграл в лотерею и хочу поделиться с тобой! Нажми сюда!", time: "07:20", avatar: "🤖", unread: 3 }
+    ];
+    
+    // Добавляем сообщения в список
+    messages.forEach(message => {
+        const messageItem = document.createElement('div');
+        messageItem.className = 'message-item';
+        
+        let unreadBadge = '';
+        if (message.unread > 0) {
+            unreadBadge = `<div class="message-unread">${message.unread}</div>`;
+        }
+        
+        messageItem.innerHTML = `
+            <div class="message-avatar">${message.avatar}</div>
+            <div class="message-content">
+                <div class="message-name">${message.name}</div>
+                <div class="message-text">${message.text}</div>
+            </div>
+            <div class="message-time">${message.time}</div>
+            ${unreadBadge}
+        `;
+        
+        messageItem.addEventListener('click', () => {
+            // Показываем уведомление о родительском контроле
+            if (message.name === "Неизвестный номер") {
+                sendPushNotification('Родительский контроль', 'Обнаружено подозрительное сообщение! Доступ заблокирован.', '🛑');
+            } else {
+                sendPushNotification('Сообщения', `Открыт чат с ${message.name}`, '💬');
+            }
+        });
+        
+        messagesList.appendChild(messageItem);
+    });
+    
+    // Обработчик для кнопки нового сообщения
+    const newMessageButton = document.querySelector('.new-message-button');
+    if (newMessageButton) {
+        newMessageButton.addEventListener('click', () => {
+            sendPushNotification('Сообщения', 'Для создания нового сообщения требуется разрешение родителей', '🔒');
+        });
+    }
+    
+    // Обновляем бейдж с количеством непрочитанных сообщений
+    updateAppBadges();
+}
+
+// Инициализация приложения "Chrome"
+function initChrome() {
+    // Обработчик для адресной строки
+    const addressInput = document.querySelector('.chrome-address-bar input');
+    if (!addressInput) return;
+    
+    addressInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const url = addressInput.value.trim().toLowerCase();
+            
+            // Проверяем на запрещенные слова
+            const blockedWords = ['взлом', 'чит', 'хакер', 'бесплатно', 'скачать', 'вирус', 'деньги', 'взломать'];
+            
+            let isBlocked = false;
+            blockedWords.forEach(word => {
+                if (url.includes(word)) {
+                    isBlocked = true;
+                }
+            });
+            
+            if (isBlocked) {
+                sendPushNotification('Родительский контроль', 'Доступ к этому сайту заблокирован!', '🛑');
+                
+                // Добавляем смешную анимацию "взлома"
+                showHackingAnimation();
+            } else {
+                sendPushNotification('Chrome', 'Для посещения сайтов требуется разрешение родителей', '🔒');
+            }
+            
+            // Очищаем поле ввода
+            addressInput.value = '';
+        }
+    });
+    
+    // Обработчики для закладок
+    document.querySelectorAll('.bookmark-item').forEach(bookmark => {
+        bookmark.addEventListener('click', () => {
+            const bookmarkName = bookmark.querySelector('.bookmark-name').textContent;
+            
+            if (bookmarkName === 'Игры') {
+                sendPushNotification('Родительский контроль', 'Доступ к играм ограничен! Сначала сделай домашнее задание!', '🎮');
+                
+                // Добавляем смешную анимацию "грустного смайлика"
+                showSadFaceAnimation();
+            } else {
+                sendPushNotification('Chrome', `Для посещения ${bookmarkName} требуется разрешение родителей`, '🔒');
+            }
+        });
+    });
+    
+    // Обработчики для истории
+    document.querySelectorAll('.history-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const historyName = item.querySelector('.history-name').textContent;
+            
+            // Проверяем на запрещенные слова
+            const blockedWords = ['взлом', 'чит', 'хакер', 'бесплатно', 'скачать', 'вирус', 'деньги', 'взломать'];
+            
+            let isBlocked = false;
+            blockedWords.forEach(word => {
+                if (historyName.toLowerCase().includes(word)) {
+                    isBlocked = true;
+                }
+            });
+            
+            if (isBlocked) {
+                sendPushNotification('Родительский контроль', 'Доступ к этому сайту заблокирован!', '🛑');
+                
+                // Добавляем смешную анимацию "взлома"
+                showHackingAnimation();
+            } else {
+                sendPushNotification('Chrome', 'Для посещения сайтов требуется разрешение родителей', '🔒');
+            }
+        });
+    });
+}
+
+// Функция для отображения смешной анимации "взлома"
+function showHackingAnimation() {
+    // Создаем элемент для анимации
+    const hackingOverlay = document.createElement('div');
+    hackingOverlay.className = 'hacking-overlay';
+    hackingOverlay.innerHTML = `
+        <div class="hacking-content">
+            <h2>ВНИМАНИЕ! ОБНАРУЖЕН ВИРУС!</h2>
+            <div class="hacking-progress">
+                <div class="progress-bar"></div>
+            </div>
+            <div class="hacking-text">Идет сканирование системы...</div>
+            <div class="hacking-emoji">🚨</div>
+        </div>
+    `;
+    
+    document.body.appendChild(hackingOverlay);
+    
+    // Анимация прогресс-бара
+    setTimeout(() => {
+        const progressBar = document.querySelector('.progress-bar');
+        progressBar.style.width = '100%';
+        
+        const hackingText = document.querySelector('.hacking-text');
+        hackingText.textContent = 'Вирус обнаружен и заблокирован!';
+        
+        const hackingEmoji = document.querySelector('.hacking-emoji');
+        hackingEmoji.textContent = '✅';
+        
+        // Удаляем анимацию через 3 секунды
+        setTimeout(() => {
+            hackingOverlay.remove();
+        }, 3000);
+    }, 2000);
+}
+
+// Функция для отображения смешной анимации "грустного смайлика"
+function showSadFaceAnimation() {
+    // Создаем элемент для анимации
+    const sadFaceOverlay = document.createElement('div');
+    sadFaceOverlay.className = 'sad-face-overlay';
+    sadFaceOverlay.innerHTML = `
+        <div class="sad-face-content">
+            <div class="sad-face-emoji">😢</div>
+            <div class="sad-face-text">Сначала нужно сделать домашнее задание!</div>
+            <div class="sad-face-subtext">Мама сказала, что игры только после уроков</div>
+        </div>
+    `;
+    
+    document.body.appendChild(sadFaceOverlay);
+    
+    // Удаляем анимацию через 3 секунды
+    setTimeout(() => {
+        sadFaceOverlay.remove();
+    }, 3000);
+}
+
+// Обновляем функцию открытия приложений
+function openApp(appName) {
+    // Анимация исчезновения текущего экрана
+    const currentScreen = document.querySelector('.active-screen');
+    if (currentScreen) {
+        currentScreen.style.animation = 'fadeOut 0.2s ease forwards';
+        
+        setTimeout(() => {
+            // Скрываем все экраны
+            document.querySelectorAll('.screen-content, .home-screen').forEach(screen => {
+                screen.classList.remove('active-screen');
+                screen.style.animation = '';
+            });
+            
+            // Открываем нужный экран с анимацией
+            let targetScreen;
+            
+            switch(appName) {
+                case 'geometrydash':
+                    targetScreen = document.querySelector('.geometry-dash-screen');
+                    break;
+                case 'whatsapp':
+                    targetScreen = document.querySelector('.whatsapp-screen');
+                    
+                    // Сбрасываем счетчик непрочитанных сообщений
+                    let totalUnread = 0;
+                    chats.forEach(chat => {
+                        totalUnread += chat.unread;
+                        chat.unread = 0;
+                    });
+                    
+                    // Обновляем UI
+                    initWhatsApp();
+                    updateAppBadges();
+                    break;
+                case 'phone':
+                    targetScreen = document.querySelector('.phone-screen');
+                    break;
+                case 'settings':
+                    targetScreen = document.querySelector('.settings-screen');
+                    break;
+                case 'camera':
+                    targetScreen = document.querySelector('.camera-screen');
+                    break;
+                case 'playmarket':
+                    targetScreen = document.querySelector('.playmarket-screen');
+                    initPlayMarket();
+                    break;
+                case 'contacts':
+                    targetScreen = document.querySelector('.contacts-screen');
+                    initContacts();
+                    break;
+                case 'messages':
+                    targetScreen = document.querySelector('.messages-screen');
+                    initMessages();
+                    break;
+                case 'chrome':
+                    targetScreen = document.querySelector('.chrome-screen');
+                    initChrome();
+                    break;
+                default:
+                    targetScreen = document.querySelector('.home-screen');
+            }
+            
+            if (targetScreen) {
+                targetScreen.classList.add('active-screen');
+                targetScreen.style.animation = 'fadeIn 0.3s ease forwards';
+            }
+        }, 200);
+    }
+}
+
+// Обновляем функцию обновления бейджей приложений
+function updateAppBadges() {
+    // Обновляем бейдж WhatsApp
+    let totalUnreadWhatsApp = 0;
+    chats.forEach(chat => {
+        totalUnreadWhatsApp += chat.unread;
+    });
+    
+    const whatsappBadge = document.querySelector('[data-app="whatsapp"] .app-badge');
+    if (whatsappBadge) {
+        whatsappBadge.textContent = totalUnreadWhatsApp > 0 ? totalUnreadWhatsApp : '';
+    }
+    
+    // Обновляем бейдж Сообщений
+    let totalUnreadMessages = 0;
+    const messages = [
+        { name: "Мама", unread: 2 },
+        { name: "Бабушка", unread: 1 },
+        { name: "Неизвестный номер", unread: 3 }
+    ];
+    
+    messages.forEach(message => {
+        totalUnreadMessages += message.unread;
+    });
+    
+    const messagesBadge = document.querySelector('[data-app="messages"] .app-badge');
+    if (messagesBadge) {
+        messagesBadge.textContent = totalUnreadMessages > 0 ? totalUnreadMessages : '';
+    }
+}
