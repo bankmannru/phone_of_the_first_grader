@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Телефон первоклассника</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="phone">
+        <div class="phone-header">
+            <div class="status-bar">
+                <span class="time">12:30</span>
+                <div class="status-icons">
+                    <i class="fas fa-wifi"></i>
+                    <i class="fas fa-signal"></i>
+                    <i class="fas fa-battery-three-quarters"></i>
+                </div>
+            </div>
+            <div class="speaker"></div>
+            <div class="punch-hole"></div>
+        </div>
+        
+        <div class="screen">
+            <!-- Домашний экран -->
+            <div class="home-screen active-screen">
+                <div class="flood-mode-toggle">
+                    <label class="switch">
+                        <input type="checkbox" id="floodModeToggle">
+                        <span class="slider round"></span>
+                    </label>
+                    <span class="flood-mode-label">Flood-режим</span>
+                </div>
+                <div class="app-grid">
+                    <div class="app" data-app="geometrydash">
+                        <div class="app-icon geometry-dash-icon">
+                            <i class="fas fa-cube"></i>
+                        </div>
+                        <div class="app-name">Geometry Dash</div>
+                    </div>
+                    <div class="app" data-app="whatsapp">
+                        <div class="app-icon whatsapp-icon">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <div class="app-name">WhatsApp</div>
+                    </div>
+                    <div class="app" data-app="phone">
+                        <div class="app-icon phone-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="app-name">Телефон</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Экран Geometry Dash -->
+            <div class="geometry-dash-screen screen-content">
+                <div class="game-header">
+                    <button class="home-button-app"><i class="fas fa-home"></i></button>
+                    <h2>Geometry Dash</h2>
+                </div>
+                <div class="game-container">
+                    <canvas id="gameCanvas" width="300" height="400"></canvas>
+                    <button id="startGame">Играть</button>
+                </div>
+            </div>
+            
+            <!-- Экран WhatsApp -->
+            <div class="whatsapp-screen screen-content">
+                <div class="app-header whatsapp-header">
+                    <button class="home-button-app"><i class="fas fa-home"></i></button>
+                    <h2>WhatsApp</h2>
+                </div>
+                <div class="chat-list">
+                    <!-- Чаты будут добавлены через JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Экран чата WhatsApp -->
+            <div class="chat-screen screen-content">
+                <div class="chat-header">
+                    <button class="back-button chat-back"><i class="fas fa-arrow-left"></i></button>
+                    <div class="chat-contact">
+                        <div class="contact-avatar"></div>
+                        <div class="contact-name"></div>
+                    </div>
+                </div>
+                <div class="chat-messages">
+                    <!-- Сообщения будут добавлены через JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Экран телефона -->
+            <div class="phone-screen screen-content">
+                <div class="app-header phone-header">
+                    <button class="home-button-app"><i class="fas fa-home"></i></button>
+                    <h2>Телефон</h2>
+                </div>
+                <div class="call-history">
+                    <!-- История звонков будет добавлена через JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Экран входящего звонка -->
+            <div class="incoming-call-screen screen-content">
+                <div class="caller-info">
+                    <div class="caller-avatar"></div>
+                    <div class="caller-name"></div>
+                    <div class="call-status">Входящий звонок...</div>
+                </div>
+                <div class="call-actions">
+                    <button class="decline-call"><i class="fas fa-phone-slash"></i></button>
+                    <button class="accept-call"><i class="fas fa-phone"></i></button>
+                </div>
+            </div>
+            
+            <!-- Экран активного звонка -->
+            <div class="active-call-screen screen-content">
+                <div class="caller-info">
+                    <div class="caller-avatar"></div>
+                    <div class="caller-name"></div>
+                    <div class="call-duration">00:00</div>
+                </div>
+                <div class="call-actions">
+                    <button class="end-call"><i class="fas fa-phone-slash"></i></button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="phone-footer">
+            <div class="home-button"></div>
+        </div>
+    </div>
+    
+    <script src="messages.js"></script>
+    <script src="geometrydash.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 
