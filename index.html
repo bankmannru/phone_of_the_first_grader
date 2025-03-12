@@ -25,13 +25,6 @@
         <div class="screen">
             <!-- Домашний экран -->
             <div class="home-screen active-screen">
-                <div class="flood-mode-toggle">
-                    <label class="switch">
-                        <input type="checkbox" id="floodModeToggle">
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="flood-mode-label">Flood-режим</span>
-                </div>
                 <div class="app-grid">
                     <div class="app" data-app="geometrydash">
                         <div class="app-icon geometry-dash-icon">
@@ -50,6 +43,24 @@
                             <i class="fas fa-phone"></i>
                         </div>
                         <div class="app-name">Телефон</div>
+                    </div>
+                    <div class="app" data-app="settings">
+                        <div class="app-icon settings-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <div class="app-name">Настройки</div>
+                    </div>
+                    <div class="app" data-app="camera">
+                        <div class="app-icon camera-icon">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <div class="app-name">Камера</div>
+                    </div>
+                    <div class="app" data-app="playmarket">
+                        <div class="app-icon playmarket-icon">
+                            <i class="fab fa-google-play"></i>
+                        </div>
+                        <div class="app-name">Play Market</div>
                     </div>
                 </div>
             </div>
@@ -89,6 +100,10 @@
                 <div class="chat-messages">
                     <!-- Сообщения будут добавлены через JavaScript -->
                 </div>
+                <div class="chat-input-container">
+                    <input type="text" class="chat-input" placeholder="Введите сообщение...">
+                    <button class="send-message"><i class="fas fa-paper-plane"></i></button>
+                </div>
             </div>
             
             <!-- Экран телефона -->
@@ -126,10 +141,188 @@
                     <button class="end-call"><i class="fas fa-phone-slash"></i></button>
                 </div>
             </div>
+            
+            <!-- Экран настроек -->
+            <div class="settings-screen screen-content">
+                <div class="app-header settings-header">
+                    <button class="home-button-app"><i class="fas fa-home"></i></button>
+                    <h2>Настройки</h2>
+                </div>
+                <div class="settings-list">
+                    <div class="settings-category">
+                        <div class="settings-category-header">Основные</div>
+                        <div class="settings-item">
+                            <div class="settings-item-name">Звук</div>
+                            <div class="settings-item-value">Вкл</div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-name">Яркость</div>
+                            <div class="settings-item-value">80%</div>
+                        </div>
+                    </div>
+                    <div class="settings-category">
+                        <div class="settings-category-header">Крутые функции телефона одноклассника</div>
+                        <div class="settings-item" id="floodModeItem">
+                            <div class="settings-item-name">Flood-режим</div>
+                            <div class="settings-item-value">
+                                <label class="switch">
+                                    <input type="checkbox" id="floodModeToggle">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="settings-category">
+                        <div class="settings-category-header">Секретные функции</div>
+                        <div class="settings-item" id="hackerModeItem">
+                            <div class="settings-item-name">Режим "Хакер"</div>
+                            <div class="settings-item-value">
+                                <label class="switch">
+                                    <input type="checkbox" id="hackerModeToggle">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="settings-item" id="snakeGameItem">
+                            <div class="settings-item-name">Змейка</div>
+                            <div class="settings-item-value">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Экран камеры -->
+            <div class="camera-screen screen-content">
+                <div class="app-header camera-header">
+                    <button class="home-button-app"><i class="fas fa-home"></i></button>
+                    <h2>Камера</h2>
+                </div>
+                <div class="camera-container">
+                    <div class="camera-viewfinder">
+                        <video id="cameraView" autoplay playsinline></video>
+                        <canvas id="cameraCanvas" style="display: none;"></canvas>
+                    </div>
+                    <div class="camera-controls">
+                        <button class="take-photo"><i class="fas fa-circle"></i></button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Экран просмотра фото -->
+            <div class="photo-view-screen screen-content">
+                <div class="app-header photo-header">
+                    <button class="back-button photo-back"><i class="fas fa-arrow-left"></i></button>
+                    <h2>Фото</h2>
+                </div>
+                <div class="photo-container">
+                    <img id="capturedPhoto" src="" alt="Captured Photo">
+                </div>
+                <div class="photo-controls">
+                    <button class="save-photo"><i class="fas fa-save"></i> Сохранить</button>
+                    <button class="share-photo"><i class="fas fa-share"></i> Поделиться</button>
+                </div>
+            </div>
+            
+            <!-- Экран игры "Змейка" -->
+            <div class="snake-game-screen screen-content">
+                <div class="app-header snake-header">
+                    <button class="back-button snake-back"><i class="fas fa-arrow-left"></i></button>
+                    <h2>Змейка</h2>
+                </div>
+                <div class="game-container">
+                    <canvas id="snakeCanvas" width="300" height="400"></canvas>
+                    <div class="snake-score">Счет: <span id="snakeScore">0</span></div>
+                </div>
+            </div>
+            
+            <!-- Экран Play Market -->
+            <div class="playmarket-screen screen-content">
+                <div class="app-header playmarket-header">
+                    <button class="home-button-app"><i class="fas fa-home"></i></button>
+                    <h2>Play Market</h2>
+                </div>
+                <div class="playmarket-search">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Поиск приложений и игр" class="search-input">
+                    </div>
+                </div>
+                <div class="playmarket-content">
+                    <h3>История поиска</h3>
+                    <div class="search-history">
+                        <div class="search-item">
+                            <i class="fas fa-history"></i>
+                            <span>скачать сбербанк взлома на деньги бесплатно</span>
+                        </div>
+                        <div class="search-item">
+                            <i class="fas fa-history"></i>
+                            <span>как стать хакером за 5 минут</span>
+                        </div>
+                        <div class="search-item">
+                            <i class="fas fa-history"></i>
+                            <span>майнкрафт без вирусов скачать</span>
+                        </div>
+                        <div class="search-item">
+                            <i class="fas fa-history"></i>
+                            <span>как взломать игру на бесконечные деньги</span>
+                        </div>
+                        <div class="search-item">
+                            <i class="fas fa-history"></i>
+                            <span>читы на фортнайт без бана</span>
+                        </div>
+                        <div class="search-item">
+                            <i class="fas fa-history"></i>
+                            <span>как скачать роблокс на телефон бесплатно</span>
+                        </div>
+                        <div class="search-item">
+                            <i class="fas fa-history"></i>
+                            <span>как получить вбаксы бесплатно 2023</span>
+                        </div>
+                        <div class="search-item">
+                            <i class="fas fa-history"></i>
+                            <span>как стать богатым в 7 лет</span>
+                        </div>
+                    </div>
+                    <h3>Рекомендуемые</h3>
+                    <div class="app-recommendations">
+                        <div class="recommended-app">
+                            <div class="app-icon-small">
+                                <img src="https://play-lh.googleusercontent.com/WNWZaxi9RdJKe2GQM3vqXIAkk69mnIl4Cc8EyZcir2SKlVOxeUv9tZGfNTmNaLC717Ht" alt="Roblox">
+                            </div>
+                            <div class="app-info">
+                                <div class="app-title">Roblox</div>
+                                <div class="app-rating">4.5 ⭐</div>
+                            </div>
+                        </div>
+                        <div class="recommended-app">
+                            <div class="app-icon-small">
+                                <img src="https://play-lh.googleusercontent.com/27O5tpaYE82W6m30rJ_MX3-UvshlDM6O8oXDxb6GseYW2T7P8UNT19727MGmz-0q3w" alt="Minecraft">
+                            </div>
+                            <div class="app-info">
+                                <div class="app-title">Minecraft</div>
+                                <div class="app-rating">4.7 ⭐</div>
+                            </div>
+                        </div>
+                        <div class="recommended-app">
+                            <div class="app-icon-small">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhB42QBXN3M3heY3e9oMJGMWRWMgG1VmEz9Q&s" alt="Among Us">
+                            </div>
+                            <div class="app-info">
+                                <div class="app-title">Among Us</div>
+                                <div class="app-rating">-5.0 ⭐</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <div class="phone-footer">
+            <div class="nav-button back-nav"><i class="fas fa-arrow-left"></i></div>
             <div class="home-button"></div>
+            <div class="nav-button recent-nav"><i class="fas fa-square"></i></div>
         </div>
     </div>
     

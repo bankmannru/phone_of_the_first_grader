@@ -25,6 +25,25 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Планирование случайных push-уведомлений
     scheduleRandomPushNotifications();
+    
+    // Обработчики для навигационных кнопок Android
+    document.querySelector('.back-nav').addEventListener('click', () => {
+        // Имитация кнопки "Назад"
+        const activeScreen = document.querySelector('.screen-content.active-screen');
+        if (activeScreen) {
+            if (activeScreen.classList.contains('chat-screen')) {
+                document.querySelector('.chat-screen').classList.remove('active-screen');
+                document.querySelector('.whatsapp-screen').classList.add('active-screen');
+            } else {
+                goToHomeScreen();
+            }
+        }
+    });
+    
+    document.querySelector('.recent-nav').addEventListener('click', () => {
+        // Имитация кнопки "Недавние приложения"
+        sendPushNotification('Система', 'Недавние приложения', '📱');
+    });
 });
 
 // Обновление времени
@@ -68,6 +87,15 @@ function initApps() {
     
     // Инициализация Flood-режима
     initFloodMode();
+    
+    // Инициализация чата с возможностью отправки сообщений
+    initChatInput();
+    
+    // Инициализация режима "Хакер"
+    initHackerMode();
+    
+    // Инициализация игры "Змейка"
+    initSnakeGame();
 }
 
 // Открытие приложения
@@ -87,6 +115,17 @@ function openApp(appName) {
             break;
         case 'phone':
             document.querySelector('.phone-screen').classList.add('active-screen');
+            break;
+        case 'settings':
+            document.querySelector('.settings-screen').classList.add('active-screen');
+            break;
+        case 'camera':
+            document.querySelector('.camera-screen').classList.add('active-screen');
+            initCamera();
+            break;
+        case 'playmarket':
+            document.querySelector('.playmarket-screen').classList.add('active-screen');
+            initPlayMarket();
             break;
     }
 }
@@ -113,29 +152,33 @@ function goToHomeScreen() {
 function initWhatsApp() {
     const chatList = document.querySelector('.chat-list');
     
-    // Создание элементов чатов
+    // Очищаем список чатов
+    chatList.innerHTML = '';
+    
+    // Добавляем чаты
     chats.forEach(chat => {
-        const chatItem = document.createElement('div');
-        chatItem.className = 'chat-item';
-        chatItem.setAttribute('data-chat-id', chat.id);
+        const chatElement = document.createElement('div');
+        chatElement.className = 'chat-item';
+        chatElement.setAttribute('data-id', chat.id);
         
-        chatItem.innerHTML = `
+        chatElement.innerHTML = `
             <div class="chat-avatar">${chat.avatar}</div>
             <div class="chat-info">
-                <div class="chat-name">${chat.name}</div>
+                <div class="chat-header">
+                    <div class="chat-name">${chat.name}</div>
+                    <div class="chat-time">${chat.time}</div>
+                </div>
                 <div class="chat-last-message">${chat.lastMessage}</div>
             </div>
-            <div class="chat-meta">
-                <div class="chat-time">${chat.time}</div>
-                ${chat.unread > 0 ? `<div class="unread-badge">${chat.unread}</div>` : ''}
-            </div>
+            ${chat.unread > 0 ? `<div class="chat-badge">${chat.unread}</div>` : ''}
         `;
         
-        chatItem.addEventListener('click', () => {
+        // Обработчик нажатия на чат
+        chatElement.addEventListener('click', () => {
             openChat(chat);
         });
         
-        chatList.appendChild(chatItem);
+        chatList.appendChild(chatElement);
     });
 }
 
@@ -154,12 +197,35 @@ function openChat(chat) {
     
     chat.messages.forEach(message => {
         const messageElement = document.createElement('div');
-        messageElement.className = `message ${message.received ? 'received' : 'sent'}`;
         
-        messageElement.innerHTML = `
-            <div class="message-content">${message.text}</div>
-            <div class="message-time">${message.time}</div>
-        `;
+        if (message.type === 'voice') {
+            // Голосовое сообщение
+            messageElement.className = `message ${message.received ? 'received' : 'sent'} voice-message`;
+            messageElement.innerHTML = `
+                <div class="voice-message-content">
+                    <i class="fas fa-play voice-play-button"></i>
+                    <div class="voice-waveform"></div>
+                    <div class="voice-duration">${message.duration}</div>
+                </div>
+                <div class="message-time">${message.time}</div>
+            `;
+        } else if (message.type === 'photo') {
+            // Фото сообщение
+            messageElement.className = `message ${message.received ? 'received' : 'sent'} photo-message`;
+            messageElement.innerHTML = `
+                <div class="photo-message-content">
+                    <img src="${message.photoUrl}" alt="Photo" class="message-photo">
+                </div>
+                <div class="message-time">${message.time}</div>
+            `;
+        } else {
+            // Обычное текстовое сообщение
+            messageElement.className = `message ${message.received ? 'received' : 'sent'}`;
+            messageElement.innerHTML = `
+                <div class="message-content">${message.text}</div>
+                <div class="message-time">${message.time}</div>
+            `;
+        }
         
         chatMessages.appendChild(messageElement);
     });
@@ -168,8 +234,8 @@ function openChat(chat) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
     
     // Сброс счетчика непрочитанных сообщений
-    const chatItem = document.querySelector(`.chat-item[data-chat-id="${chat.id}"]`);
-    const unreadBadge = chatItem.querySelector('.unread-badge');
+    const chatItem = document.querySelector(`.chat-item[data-id="${chat.id}"]`);
+    const unreadBadge = chatItem.querySelector('.chat-badge');
     if (unreadBadge) {
         unreadBadge.remove();
         chat.unread = 0;
@@ -421,7 +487,7 @@ function scheduleNewMessages() {
             
             if (!chatScreen.classList.contains('active-screen') || currentChatName !== chat.name) {
                 // Обновление списка чатов
-                const chatItem = document.querySelector(`.chat-item[data-chat-id="${chat.id}"]`);
+                const chatItem = document.querySelector(`.chat-item[data-id="${chat.id}"]`);
                 const lastMessageElement = chatItem.querySelector('.chat-last-message');
                 const timeElement = chatItem.querySelector('.chat-time');
                 
@@ -429,13 +495,13 @@ function scheduleNewMessages() {
                 timeElement.textContent = time;
                 
                 // Обновление или добавление бейджа с непрочитанными
-                let unreadBadge = chatItem.querySelector('.unread-badge');
+                let unreadBadge = chatItem.querySelector('.chat-badge');
                 if (unreadBadge) {
                     unreadBadge.textContent = chat.unread;
                 } else {
-                    const chatMeta = chatItem.querySelector('.chat-meta');
+                    const chatMeta = chatItem.querySelector('.chat-info');
                     unreadBadge = document.createElement('div');
-                    unreadBadge.className = 'unread-badge';
+                    unreadBadge.className = 'chat-badge';
                     unreadBadge.textContent = chat.unread;
                     chatMeta.appendChild(unreadBadge);
                 }
@@ -725,33 +791,69 @@ function scheduleRandomPushNotifications() {
     });
 }
 
+// Глобальные переменные для интервалов Flood-режима
+let floodCallInterval;
+let floodMessageInterval;
+let floodNotificationInterval;
+
 // Функция инициализации Flood-режима
 function initFloodMode() {
+    // Получаем переключатель из настроек (а не с домашнего экрана)
     const floodToggle = document.getElementById('floodModeToggle');
+    
+    if (!floodToggle) {
+        console.error('Переключатель Flood-режима не найден!');
+        return;
+    }
     
     floodToggle.addEventListener('change', function() {
         if (this.checked) {
             // Включаем Flood-режим
             document.querySelector('.phone').classList.add('flood-mode-active');
             startFloodMode();
+            
+            // Добавляем анимацию к элементу настроек
+            const floodModeItem = document.getElementById('floodModeItem');
+            if (floodModeItem) {
+                floodModeItem.style.backgroundColor = 'rgba(255, 59, 48, 0.1)';
+            }
+            
+            // Показываем уведомление о включении режима
+            sendPushNotification('Система', 'Flood-режим активирован! Держись крепче!', '⚠️');
         } else {
             // Выключаем Flood-режим
             document.querySelector('.phone').classList.remove('flood-mode-active');
             stopFloodMode();
+            
+            // Возвращаем обычный фон элементу настроек
+            const floodModeItem = document.getElementById('floodModeItem');
+            if (floodModeItem) {
+                floodModeItem.style.backgroundColor = 'white';
+            }
+            
+            // Показываем уведомление о выключении режима
+            sendPushNotification('Система', 'Flood-режим деактивирован', '✅');
         }
     });
+    
+    // Добавляем эффект "секретной функции"
+    const floodModeItem = document.getElementById('floodModeItem');
+    if (floodModeItem) {
+        floodModeItem.addEventListener('click', function(e) {
+            // Не активируем при клике на переключатель
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SPAN' && e.target.tagName !== 'LABEL') {
+                // Показываем подсказку
+                sendPushNotification('Настройки', 'Это секретная функция для крутых пацанов!', '🔥');
+            }
+        });
+    }
 }
-
-// Глобальные переменные для интервалов Flood-режима
-let floodCallInterval;
-let floodMessageInterval;
 
 // Функция запуска Flood-режима
 function startFloodMode() {
-    // Показываем уведомление о включении режима
-    sendPushNotification('Система', 'Flood-режим активирован!', '⚠️');
+    console.log('Запуск Flood-режима');
     
-    // Начинаем спамить звонками каждые 10-15 секунд
+    // Начинаем спамить звонками каждые 5-10 секунд
     floodCallInterval = setInterval(() => {
         // Выбираем случайный контакт для звонка
         const randomCallIndex = Math.floor(Math.random() * incomingCalls.length);
@@ -759,9 +861,9 @@ function startFloodMode() {
         
         // Показываем входящий звонок
         showIncomingCall(randomCall);
-    }, Math.random() * 5000 + 10000); // 10-15 секунд
+    }, Math.random() * 5000 + 5000); // 5-10 секунд
     
-    // Начинаем спамить сообщениями каждые 3-7 секунд
+    // Начинаем спамить сообщениями каждые 2-5 секунд
     floodMessageInterval = setInterval(() => {
         // Выбираем случайный чат
         const randomChatIndex = Math.floor(Math.random() * chats.length);
@@ -808,10 +910,10 @@ function startFloodMode() {
         // Обновление UI и показ уведомления
         updateChatUI(chat);
         showNotification(chat.name, messageText, chat.avatar);
-    }, Math.random() * 4000 + 3000); // 3-7 секунд
+    }, Math.random() * 3000 + 2000); // 2-5 секунд
     
     // Также добавим случайные push-уведомления от других приложений
-    setInterval(() => {
+    floodNotificationInterval = setInterval(() => {
         const apps = [
             { title: 'Instagram', message: 'У вас новое сообщение!', icon: '📷' },
             { title: 'TikTok', message: 'Ваше видео набирает популярность!', icon: '🎵' },
@@ -822,43 +924,888 @@ function startFloodMode() {
         
         const randomApp = apps[Math.floor(Math.random() * apps.length)];
         sendPushNotification(randomApp.title, randomApp.message, randomApp.icon);
-    }, Math.random() * 8000 + 5000); // 5-13 секунд
+    }, Math.random() * 4000 + 3000); // 3-7 секунд
 }
 
 // Функция остановки Flood-режима
 function stopFloodMode() {
-    // Очищаем интервалы
-    clearInterval(floodCallInterval);
-    clearInterval(floodMessageInterval);
+    console.log('Остановка Flood-режима');
     
-    // Показываем уведомление о выключении режима
-    sendPushNotification('Система', 'Flood-режим деактивирован', '✅');
+    // Очищаем интервалы
+    if (floodCallInterval) clearInterval(floodCallInterval);
+    if (floodMessageInterval) clearInterval(floodMessageInterval);
+    if (floodNotificationInterval) clearInterval(floodNotificationInterval);
 }
 
 // Вспомогательная функция для обновления UI чата
 function updateChatUI(chat) {
-    // Обновление списка чатов, если он отображается
-    const chatItem = document.querySelector(`.chat-item[data-chat-id="${chat.id}"]`);
-    if (chatItem) {
-        const lastMessageElement = chatItem.querySelector('.chat-last-message');
-        const timeElement = chatItem.querySelector('.chat-time');
+    // Находим элемент чата в списке
+    const chatElement = document.querySelector(`.chat-item[data-id="${chat.id}"]`);
+    
+    if (chatElement) {
+        // Обновляем последнее сообщение и время
+        chatElement.querySelector('.chat-last-message').textContent = chat.lastMessage;
+        chatElement.querySelector('.chat-time').textContent = chat.time;
         
-        lastMessageElement.textContent = chat.lastMessage;
-        timeElement.textContent = chat.time;
-        
-        // Обновление или добавление бейджа с непрочитанными
-        let unreadBadge = chatItem.querySelector('.unread-badge');
-        if (unreadBadge) {
-            unreadBadge.textContent = chat.unread;
-        } else {
-            const chatMeta = chatItem.querySelector('.chat-meta');
-            unreadBadge = document.createElement('div');
-            unreadBadge.className = 'unread-badge';
-            unreadBadge.textContent = chat.unread;
-            chatMeta.appendChild(unreadBadge);
+        // Обновляем бейдж с непрочитанными сообщениями
+        const badgeElement = chatElement.querySelector('.chat-badge');
+        if (chat.unread > 0) {
+            if (badgeElement) {
+                badgeElement.textContent = chat.unread;
+            } else {
+                const newBadge = document.createElement('div');
+                newBadge.className = 'chat-badge';
+                newBadge.textContent = chat.unread;
+                chatElement.appendChild(newBadge);
+            }
+        } else if (badgeElement) {
+            badgeElement.remove();
         }
     }
+}
+
+// Добавляем функцию для отправки сообщений в чате
+function initChatInput() {
+    const chatInput = document.querySelector('.chat-input');
+    const sendButton = document.querySelector('.send-message');
     
-    // Обновление бейджей на иконках приложений
+    // Функция отправки сообщения
+    function sendMessage() {
+        const text = chatInput.value.trim();
+        if (text === '') return;
+        
+        // Получаем текущий чат
+        const chatName = document.querySelector('.contact-name').textContent;
+        const currentChat = chats.find(c => c.name === chatName);
+        
+        if (!currentChat) return;
+        
+        // Текущее время
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const time = `${hours}:${minutes}`;
+        
+        // Создание сообщения
+        const newMessage = {
+            text: text,
+            time: time,
+            received: false
+        };
+        
+        // Добавление сообщения в чат
+        currentChat.messages.push(newMessage);
+        currentChat.lastMessage = text;
+        currentChat.time = time;
+        
+        // Обновление UI
+        const messageElement = document.createElement('div');
+        messageElement.className = 'message sent';
+        
+        messageElement.innerHTML = `
+            <div class="message-content">${text}</div>
+            <div class="message-time">${time}</div>
+        `;
+        
+        document.querySelector('.chat-messages').appendChild(messageElement);
+        document.querySelector('.chat-messages').scrollTop = document.querySelector('.chat-messages').scrollHeight;
+        
+        // Очистка поля ввода
+        chatInput.value = '';
+        
+        // Обновляем список чатов
+        updateChatUI(currentChat);
+        
+        // Генерация автоматического ответа через 1-3 секунды
+        setTimeout(() => {
+            generateAutoReply(currentChat);
+        }, Math.random() * 2000 + 1000);
+    }
+    
+    // Обработчик нажатия на кнопку отправки
+    sendButton.addEventListener('click', sendMessage);
+    
+    // Обработчик нажатия Enter в поле ввода
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+    
+    // Добавляем кнопки для голосовых сообщений и фото
+    addVoiceMessageButton();
+    addPhotoButton();
+}
+
+// Функция для генерации автоматического ответа
+function generateAutoReply(chat) {
+    // Текущее время
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const time = `${hours}:${minutes}`;
+    
+    // Выбор ответа в зависимости от контакта
+    let replyText = '';
+    
+    switch(chat.name) {
+        case 'Мама':
+            const mamaReplies = [
+                "Немедленно сделай уроки!",
+                "Ты покормил кота?",
+                "Что ты ел сегодня?",
+                "Я звонила твоему учителю",
+                "Папа будет недоволен твоими оценками",
+                "Не забудь помыть посуду",
+                "Бабушка спрашивала о тебе"
+            ];
+            replyText = mamaReplies[Math.floor(Math.random() * mamaReplies.length)];
+            break;
+            
+        case 'Папа':
+            const papaReplies = [
+                "Как дела в школе?",
+                "Помоги маме по дому",
+                "Я задержусь на работе",
+                "Не сиди долго за телефоном",
+                "Купи хлеба по дороге домой",
+                "Не забудь про тренировку"
+            ];
+            replyText = papaReplies[Math.floor(Math.random() * papaReplies.length)];
+            break;
+            
+        case 'Бабушка':
+            const grandmaReplies = [
+                "Кушал сегодня?",
+                "Я пирожки испекла",
+                "Приезжай на выходных",
+                "Как твои оценки, внучек?",
+                "Тепло ли ты одеваешься?",
+                "Я связала тебе новые носочки"
+            ];
+            replyText = grandmaReplies[Math.floor(Math.random() * grandmaReplies.length)];
+            break;
+            
+        case 'Алкаш':
+            const alkashReplies = [
+                "Отдавай деньги!!!",
+                "Я тебя найду",
+                "Ты где шкет?",
+                "Не обманывай меня",
+                "Я все равно тебя поймаю",
+                "Скажи маме чтоб позвонила"
+            ];
+            replyText = alkashReplies[Math.floor(Math.random() * alkashReplies.length)];
+            break;
+            
+        case 'Одноклассник Петя':
+            const petyaReplies = [
+                "Что задали по матеше?",
+                "Пойдем гулять?",
+                "Скинь ответы по физике",
+                "Ты видел новую игру?",
+                "Училка опять злая была",
+                "Завтра контрольная?"
+            ];
+            replyText = petyaReplies[Math.floor(Math.random() * petyaReplies.length)];
+            break;
+            
+        default:
+            const defaultReplies = [
+                "Ок",
+                "Понятно",
+                "Хорошо",
+                "Не понял тебя",
+                "???",
+                "Перезвони мне"
+            ];
+            replyText = defaultReplies[Math.floor(Math.random() * defaultReplies.length)];
+    }
+    
+    // Создание сообщения
+    const newMessage = {
+        text: replyText,
+        time: time,
+        received: true
+    };
+    
+    // Добавление сообщения в чат
+    chat.messages.push(newMessage);
+    chat.lastMessage = replyText;
+    chat.time = time;
+    chat.unread++;
+    
+    // Обновление UI
+    updateChatUI(chat);
+    
+    // Если чат открыт, добавляем сообщение на экран
+    if (document.querySelector('.chat-screen').classList.contains('active-screen') && 
+        document.querySelector('.contact-name').textContent === chat.name) {
+        
+        const messageElement = document.createElement('div');
+        messageElement.className = 'message received';
+        
+        messageElement.innerHTML = `
+            <div class="message-content">${replyText}</div>
+            <div class="message-time">${time}</div>
+        `;
+        
+        document.querySelector('.chat-messages').appendChild(messageElement);
+        document.querySelector('.chat-messages').scrollTop = document.querySelector('.chat-messages').scrollHeight;
+        
+        // Сбрасываем счетчик непрочитанных
+        chat.unread = 0;
+    } else {
+        // Показываем уведомление
+        showNotification(chat.name, replyText, chat.avatar);
+    }
+    
+    // Обновляем бейджи на иконках приложений
     updateAppBadges();
+}
+
+// Функция для добавления голосовых сообщений
+function addVoiceMessageButton() {
+    const chatInputContainer = document.querySelector('.chat-input-container');
+    const chatInput = document.querySelector('.chat-input');
+    
+    // Добавляем кнопку для голосовых сообщений
+    const voiceButton = document.createElement('button');
+    voiceButton.className = 'voice-message-button';
+    voiceButton.innerHTML = '<i class="fas fa-microphone"></i>';
+    
+    // Вставляем кнопку перед полем ввода
+    chatInputContainer.insertBefore(voiceButton, chatInput);
+    
+    // Добавляем обработчик для записи голосового сообщения
+    let isRecording = false;
+    let recordingTimeout;
+    
+    voiceButton.addEventListener('mousedown', () => {
+        isRecording = true;
+        voiceButton.classList.add('recording');
+        
+        // Показываем индикатор записи
+        const recordingIndicator = document.createElement('div');
+        recordingIndicator.className = 'recording-indicator';
+        recordingIndicator.innerHTML = `
+            <div class="recording-wave"></div>
+            <div class="recording-time">0:00</div>
+        `;
+        chatInputContainer.appendChild(recordingIndicator);
+        
+        // Имитируем запись (через 2-5 секунд отправляем голосовое)
+        recordingTimeout = setTimeout(() => {
+            if (isRecording) {
+                sendVoiceMessage();
+            }
+        }, Math.random() * 3000 + 2000);
+    });
+    
+    // Отпускание кнопки - отправка сообщения
+    voiceButton.addEventListener('mouseup', () => {
+        if (isRecording) {
+            clearTimeout(recordingTimeout);
+            sendVoiceMessage();
+        }
+    });
+    
+    // Функция отправки голосового сообщения
+    function sendVoiceMessage() {
+        isRecording = false;
+        voiceButton.classList.remove('recording');
+        
+        // Удаляем индикатор записи
+        const recordingIndicator = document.querySelector('.recording-indicator');
+        if (recordingIndicator) {
+            recordingIndicator.remove();
+        }
+        
+        // Получаем текущий чат
+        const chatName = document.querySelector('.contact-name').textContent;
+        const currentChat = chats.find(c => c.name === chatName);
+        
+        if (!currentChat) return;
+        
+        // Текущее время
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const time = `${hours}:${minutes}`;
+        
+        // Длительность голосового (случайная от 0:01 до 0:59)
+        const voiceDuration = `0:${Math.floor(Math.random() * 59 + 1).toString().padStart(2, '0')}`;
+        
+        // Создание голосового сообщения
+        const newMessage = {
+            type: 'voice',
+            duration: voiceDuration,
+            time: time,
+            received: false
+        };
+        
+        // Добавление сообщения в чат
+        currentChat.messages.push(newMessage);
+        currentChat.lastMessage = '🎤 Голосовое сообщение';
+        currentChat.time = time;
+        
+        // Обновление UI
+        const messageElement = document.createElement('div');
+        messageElement.className = 'message sent voice-message';
+        
+        messageElement.innerHTML = `
+            <div class="voice-message-content">
+                <i class="fas fa-play voice-play-button"></i>
+                <div class="voice-waveform"></div>
+                <div class="voice-duration">${voiceDuration}</div>
+            </div>
+            <div class="message-time">${time}</div>
+        `;
+        
+        document.querySelector('.chat-messages').appendChild(messageElement);
+        document.querySelector('.chat-messages').scrollTop = document.querySelector('.chat-messages').scrollHeight;
+        
+        // Обновляем список чатов
+        updateChatUI(currentChat);
+        
+        // Генерация автоматического ответа через 1-3 секунды
+        setTimeout(() => {
+            generateAutoReply(currentChat);
+        }, Math.random() * 2000 + 1000);
+    }
+}
+
+// Добавляем функцию для отправки фото
+function addPhotoButton() {
+    const chatInputContainer = document.querySelector('.chat-input-container');
+    const sendButton = document.querySelector('.send-message');
+    
+    // Добавляем кнопку для отправки фото
+    const photoButton = document.createElement('button');
+    photoButton.className = 'photo-button';
+    photoButton.innerHTML = '<i class="fas fa-image"></i>';
+    
+    // Вставляем кнопку перед кнопкой отправки
+    chatInputContainer.insertBefore(photoButton, sendButton);
+    
+    // Обработчик нажатия на кнопку фото
+    photoButton.addEventListener('click', () => {
+        // Показываем диалог выбора фото
+        const photoDialog = document.createElement('div');
+        photoDialog.className = 'photo-dialog';
+        photoDialog.innerHTML = `
+            <div class="photo-dialog-header">
+                <button class="photo-dialog-close"><i class="fas fa-times"></i></button>
+                <div class="photo-dialog-title">Отправить фото</div>
+            </div>
+            <div class="photo-options">
+                <div class="photo-option" data-source="camera">
+                    <i class="fas fa-camera"></i>
+                    <span>Камера</span>
+                </div>
+                <div class="photo-option" data-source="gallery">
+                    <i class="fas fa-images"></i>
+                    <span>Галерея</span>
+                </div>
+            </div>
+        `;
+        
+        document.querySelector('.phone').appendChild(photoDialog);
+        
+        // Анимация появления
+        setTimeout(() => {
+            photoDialog.classList.add('show');
+        }, 10);
+        
+        // Обработчик закрытия диалога
+        photoDialog.querySelector('.photo-dialog-close').addEventListener('click', () => {
+            photoDialog.classList.remove('show');
+            setTimeout(() => {
+                photoDialog.remove();
+            }, 300);
+        });
+        
+        // Обработчики выбора источника фото
+        photoDialog.querySelectorAll('.photo-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const source = option.getAttribute('data-source');
+                photoDialog.classList.remove('show');
+                
+                setTimeout(() => {
+                    photoDialog.remove();
+                    sendPhoto(source);
+                }, 300);
+            });
+        });
+    });
+    
+    // Функция отправки фото
+    function sendPhoto(source) {
+        // Получаем текущий чат
+        const chatName = document.querySelector('.contact-name').textContent;
+        const currentChat = chats.find(c => c.name === chatName);
+        
+        if (!currentChat) return;
+        
+        // Текущее время
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const time = `${hours}:${minutes}`;
+        
+        // URL фото (используем заглушку)
+        const photoUrl = 'https://upload.wikimedia.org/wikipedia/commons/3/3d/Mendigo_na_baixa_pombalina.jpg';
+        
+        // Создание сообщения с фото
+        const newMessage = {
+            type: 'photo',
+            photoUrl: photoUrl,
+            time: time,
+            received: false
+        };
+        
+        // Добавление сообщения в чат
+        currentChat.messages.push(newMessage);
+        currentChat.lastMessage = '📷 Фото';
+        currentChat.time = time;
+        
+        // Обновление UI
+        const messageElement = document.createElement('div');
+        messageElement.className = 'message sent photo-message';
+        
+        messageElement.innerHTML = `
+            <div class="photo-message-content">
+                <img src="${photoUrl}" alt="Photo" class="message-photo">
+            </div>
+            <div class="message-time">${time}</div>
+        `;
+        
+        document.querySelector('.chat-messages').appendChild(messageElement);
+        document.querySelector('.chat-messages').scrollTop = document.querySelector('.chat-messages').scrollHeight;
+        
+        // Обновляем список чатов
+        updateChatUI(currentChat);
+        
+        // Генерация автоматического ответа через 1-3 секунды
+        setTimeout(() => {
+            generateAutoReply(currentChat);
+        }, Math.random() * 2000 + 1000);
+    }
+}
+
+// Функция для инициализации камеры
+function initCamera() {
+    const cameraView = document.getElementById('cameraView');
+    const cameraCanvas = document.getElementById('cameraCanvas');
+    const capturedPhoto = document.getElementById('capturedPhoto');
+    const takePhotoBtn = document.querySelector('.take-photo');
+    const photoBackBtn = document.querySelector('.photo-back');
+    const savePhotoBtn = document.querySelector('.save-photo');
+    const sharePhotoBtn = document.querySelector('.share-photo');
+    
+    // Делаем фото (всегда одно и то же изображение)
+    function takePhoto() {
+        // Показываем экран просмотра фото
+        document.querySelector('.camera-screen').classList.remove('active-screen');
+        document.querySelector('.photo-view-screen').classList.add('active-screen');
+        
+        // Устанавливаем фиксированное изображение
+        capturedPhoto.src = 'https://upload.wikimedia.org/wikipedia/commons/3/3d/Mendigo_na_baixa_pombalina.jpg';
+    }
+    
+    // Возврат к камере
+    function backToCamera() {
+        document.querySelector('.photo-view-screen').classList.remove('active-screen');
+        document.querySelector('.camera-screen').classList.add('active-screen');
+    }
+    
+    // Сохранение фото
+    function savePhoto() {
+        sendPushNotification('Камера', 'Фото сохранено в галерею', '📷');
+        
+        // Добавляем фото в галерею (имитация)
+        setTimeout(() => {
+            document.querySelector('.photo-view-screen').classList.remove('active-screen');
+            goToHomeScreen();
+        }, 1000);
+    }
+    
+    // Поделиться фото
+    function sharePhoto() {
+        // Показываем диалог выбора приложения для отправки
+        const shareDialog = document.createElement('div');
+        shareDialog.className = 'share-dialog';
+        shareDialog.innerHTML = `
+            <div class="share-dialog-header">Поделиться через</div>
+            <div class="share-apps">
+                <div class="share-app" data-app="whatsapp">
+                    <div class="share-app-icon"><i class="fab fa-whatsapp"></i></div>
+                    <div class="share-app-name">WhatsApp</div>
+                </div>
+                <div class="share-app" data-app="instagram">
+                    <div class="share-app-icon"><i class="fab fa-instagram"></i></div>
+                    <div class="share-app-name">Instagram</div>
+                </div>
+                <div class="share-app" data-app="telegram">
+                    <div class="share-app-icon"><i class="fab fa-telegram"></i></div>
+                    <div class="share-app-name">Telegram</div>
+                </div>
+            </div>
+            <button class="share-cancel">Отмена</button>
+        `;
+        
+        document.querySelector('.phone').appendChild(shareDialog);
+        
+        // Обработчики для диалога
+        shareDialog.querySelector('.share-cancel').addEventListener('click', () => {
+            shareDialog.remove();
+        });
+        
+        shareDialog.querySelectorAll('.share-app').forEach(app => {
+            app.addEventListener('click', () => {
+                const appName = app.getAttribute('data-app');
+                shareDialog.remove();
+                sendPushNotification('Камера', `Фото отправлено через ${appName}`, '📷');
+                
+                setTimeout(() => {
+                    document.querySelector('.photo-view-screen').classList.remove('active-screen');
+                    goToHomeScreen();
+                }, 1000);
+            });
+        });
+    }
+    
+    // Назначаем обработчики событий
+    takePhotoBtn.addEventListener('click', takePhoto);
+    photoBackBtn.addEventListener('click', backToCamera);
+    savePhotoBtn.addEventListener('click', savePhoto);
+    sharePhotoBtn.addEventListener('click', sharePhoto);
+}
+
+// Функция для инициализации режима "Хакер"
+function initHackerMode() {
+    const hackerToggle = document.getElementById('hackerModeToggle');
+    
+    if (!hackerToggle) return;
+    
+    hackerToggle.addEventListener('change', function() {
+        if (this.checked) {
+            // Включаем режим "Хакер"
+            document.querySelector('.phone').classList.add('hacker-mode-active');
+            sendPushNotification('Система', 'Режим "Хакер" активирован', '💻');
+            
+            // Добавляем эффект "взлома"
+            showHackingEffect();
+        } else {
+            // Выключаем режим "Хакер"
+            document.querySelector('.phone').classList.remove('hacker-mode-active');
+            sendPushNotification('Система', 'Режим "Хакер" деактивирован', '✅');
+        }
+    });
+    
+    // Эффект "взлома"
+    function showHackingEffect() {
+        const hackingTexts = [
+            'Взлом системы...',
+            'Доступ получен',
+            'Загрузка данных...',
+            'Перехват сообщений...',
+            'Обход защиты...',
+            'Установка бэкдора...',
+            'Шифрование соединения...'
+        ];
+        
+        let count = 0;
+        const interval = setInterval(() => {
+            if (count >= hackingTexts.length || !hackerToggle.checked) {
+                clearInterval(interval);
+                return;
+            }
+            
+            sendPushNotification('ХАКЕР', hackingTexts[count], '🔓');
+            count++;
+        }, 1500);
+    }
+}
+
+// Функция для инициализации игры "Змейка"
+function initSnakeGame() {
+    const snakeGameItem = document.getElementById('snakeGameItem');
+    const snakeBackButton = document.querySelector('.snake-back');
+    
+    if (!snakeGameItem) return;
+    
+    // Обработчик нажатия на пункт меню "Змейка"
+    snakeGameItem.addEventListener('click', function() {
+        document.querySelector('.settings-screen').classList.remove('active-screen');
+        document.querySelector('.snake-game-screen').classList.add('active-screen');
+        startSnakeGame();
+    });
+    
+    // Обработчик нажатия на кнопку "Назад" в игре
+    snakeBackButton.addEventListener('click', function() {
+        document.querySelector('.snake-game-screen').classList.remove('active-screen');
+        document.querySelector('.settings-screen').classList.add('active-screen');
+    });
+    
+    // Функция запуска игры "Змейка"
+    function startSnakeGame() {
+        const canvas = document.getElementById('snakeCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('snakeScore');
+        
+        const gridSize = 20;
+        const gridWidth = canvas.width / gridSize;
+        const gridHeight = canvas.height / gridSize;
+        
+        let snake = [{ x: 10, y: 10 }];
+        let food = { x: 15, y: 15 };
+        let direction = 'right';
+        let score = 0;
+        let gameSpeed = 150;
+        let gameInterval;
+        
+        // Функция отрисовки игры
+        function draw() {
+            // Очистка холста
+            ctx.fillStyle = '#f0f0f0';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Отрисовка змейки
+            snake.forEach((segment, index) => {
+                ctx.fillStyle = index === 0 ? '#FF3B30' : '#007AFF';
+                ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
+            });
+            
+            // Отрисовка еды
+            ctx.fillStyle = '#4CD964';
+            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
+            
+            // Обновление счета
+            scoreElement.textContent = score;
+        }
+        
+        // Функция обновления игры
+        function update() {
+            // Создаем новую голову змейки
+            const head = { ...snake[0] };
+            
+            // Обновляем позицию головы в зависимости от направления
+            switch (direction) {
+                case 'up': head.y--; break;
+                case 'down': head.y++; break;
+                case 'left': head.x--; break;
+                case 'right': head.x++; break;
+            }
+            
+            // Проверка на столкновение со стеной
+            if (head.x < 0 || head.x >= gridWidth || head.y < 0 || head.y >= gridHeight) {
+                gameOver();
+                return;
+            }
+            
+            // Проверка на столкновение с самой собой
+            if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                gameOver();
+                return;
+            }
+            
+            // Добавляем новую голову
+            snake.unshift(head);
+            
+            // Проверка на поедание еды
+            if (head.x === food.x && head.y === food.y) {
+                // Увеличиваем счет
+                score += 10;
+                
+                // Создаем новую еду
+                food = {
+                    x: Math.floor(Math.random() * gridWidth),
+                    y: Math.floor(Math.random() * gridHeight)
+                };
+                
+                // Увеличиваем скорость игры
+                if (gameSpeed > 50) {
+                    gameSpeed -= 5;
+                    clearInterval(gameInterval);
+                    gameInterval = setInterval(update, gameSpeed);
+                }
+                
+                // Звук поедания
+                const eatSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3');
+                eatSound.volume = 0.5;
+                eatSound.play();
+            } else {
+                // Удаляем хвост
+                snake.pop();
+            }
+            
+            // Отрисовка игры
+            draw();
+        }
+        
+        // Функция завершения игры
+        function gameOver() {
+            clearInterval(gameInterval);
+            
+            // Звук проигрыша
+            const gameOverSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-retro-arcade-game-over-470.mp3');
+            gameOverSound.volume = 0.5;
+            gameOverSound.play();
+            
+            // Отображение сообщения о проигрыше
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = 'white';
+            ctx.font = '30px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Игра окончена!', canvas.width / 2, canvas.height / 2 - 30);
+            ctx.font = '20px Arial';
+            ctx.fillText(`Счет: ${score}`, canvas.width / 2, canvas.height / 2 + 10);
+            ctx.fillText('Нажмите для новой игры', canvas.width / 2, canvas.height / 2 + 50);
+            
+            // Обработчик нажатия для перезапуска игры
+            canvas.addEventListener('click', restartGame, { once: true });
+        }
+        
+        // Функция перезапуска игры
+        function restartGame() {
+            snake = [{ x: 10, y: 10 }];
+            food = { x: 15, y: 15 };
+            direction = 'right';
+            score = 0;
+            gameSpeed = 150;
+            
+            clearInterval(gameInterval);
+            gameInterval = setInterval(update, gameSpeed);
+        }
+        
+        // Обработчик нажатий клавиш
+        document.addEventListener('keydown', function(e) {
+            switch (e.key) {
+                case 'ArrowUp':
+                    if (direction !== 'down') direction = 'up';
+                    break;
+                case 'ArrowDown':
+                    if (direction !== 'up') direction = 'down';
+                    break;
+                case 'ArrowLeft':
+                    if (direction !== 'right') direction = 'left';
+                    break;
+                case 'ArrowRight':
+                    if (direction !== 'left') direction = 'right';
+                    break;
+            }
+        });
+        
+        // Обработчик свайпов для мобильных устройств
+        let touchStartX, touchStartY;
+        
+        canvas.addEventListener('touchstart', function(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            e.preventDefault();
+        }, { passive: false });
+        
+        canvas.addEventListener('touchmove', function(e) {
+            if (!touchStartX || !touchStartY) return;
+            
+            const touchEndX = e.touches[0].clientX;
+            const touchEndY = e.touches[0].clientY;
+            
+            const dx = touchEndX - touchStartX;
+            const dy = touchEndY - touchStartY;
+            
+            if (Math.abs(dx) > Math.abs(dy)) {
+                // Горизонтальный свайп
+                if (dx > 0 && direction !== 'left') {
+                    direction = 'right';
+                } else if (dx < 0 && direction !== 'right') {
+                    direction = 'left';
+                }
+            } else {
+                // Вертикальный свайп
+                if (dy > 0 && direction !== 'up') {
+                    direction = 'down';
+                } else if (dy < 0 && direction !== 'down') {
+                    direction = 'up';
+                }
+            }
+            
+            touchStartX = touchEndX;
+            touchStartY = touchEndY;
+            e.preventDefault();
+        }, { passive: false });
+        
+        // Запуск игры
+        gameInterval = setInterval(update, gameSpeed);
+        draw();
+    }
+}
+
+// Функция инициализации Play Market
+function initPlayMarket() {
+    const searchInput = document.querySelector('.search-input');
+    const searchItems = document.querySelectorAll('.search-item');
+    
+    // Обработчик клика по истории поиска
+    searchItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const searchText = item.querySelector('span').textContent;
+            searchInput.value = searchText;
+            
+            // Показываем уведомление о невозможности скачать
+            setTimeout(() => {
+                if (searchText.includes('взлома') || searchText.includes('читы') || searchText.includes('бесплатно')) {
+                    sendPushNotification('Play Market', 'Приложение не найдено или содержит вирусы', '🛑');
+                } else {
+                    sendPushNotification('Play Market', 'Для скачивания требуется разрешение родителей', '🔒');
+                }
+            }, 1000);
+        });
+    });
+    
+    // Обработчик ввода в поле поиска
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const searchText = searchInput.value.trim();
+            if (searchText) {
+                // Добавляем новый поиск в историю
+                const searchHistory = document.querySelector('.search-history');
+                const newSearchItem = document.createElement('div');
+                newSearchItem.className = 'search-item';
+                newSearchItem.innerHTML = `
+                    <i class="fas fa-history"></i>
+                    <span>${searchText}</span>
+                `;
+                
+                // Добавляем в начало списка
+                searchHistory.insertBefore(newSearchItem, searchHistory.firstChild);
+                
+                // Показываем уведомление
+                setTimeout(() => {
+                    if (searchText.toLowerCase().includes('взлом') || 
+                        searchText.toLowerCase().includes('чит') || 
+                        searchText.toLowerCase().includes('бесплатно') ||
+                        searchText.toLowerCase().includes('без вирусов')) {
+                        sendPushNotification('Play Market', 'Приложение не найдено или содержит вирусы', '🛑');
+                    } else {
+                        sendPushNotification('Play Market', 'Для скачивания требуется разрешение родителей', '🔒');
+                    }
+                }, 1000);
+                
+                // Очищаем поле ввода
+                searchInput.value = '';
+            }
+        }
+    });
+    
+    // Обработчик клика по рекомендуемым приложениям
+    document.querySelectorAll('.recommended-app').forEach(app => {
+        app.addEventListener('click', () => {
+            const appName = app.querySelector('.app-title').textContent;
+            sendPushNotification('Play Market', `Для скачивания ${appName} требуется разрешение родителей`, '🔒');
+        });
+    });
 } 
