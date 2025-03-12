@@ -127,17 +127,20 @@ body {
     height: 100%;
     padding: 0;
     display: none;
-    background: linear-gradient(to bottom, #2C3E50, #000000);
+    background: linear-gradient(to bottom, #1A2980, #26D0CE);
+    position: relative;
+    padding-bottom: 90px;
 }
 
 .app-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-gap: 16px;
-    padding: 16px;
+    grid-gap: 20px;
+    padding: 20px;
     width: 100%;
     justify-content: center;
     align-content: start;
+    padding-bottom: 30px;
 }
 
 .app {
@@ -149,16 +152,25 @@ body {
 }
 
 .app-icon {
-    width: 55px;
-    height: 55px;
-    border-radius: 18px;
+    width: 60px;
+    height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 50%;
+    margin-bottom: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    position: relative;
     font-size: 28px;
     color: white;
-    margin-bottom: 5px;
-    box-shadow: var(--md-elevation-1);
+}
+
+.app-icon img {
+    width: 85%;
+    height: 85%;
+    object-fit: contain;
+    border-radius: 0;
 }
 
 .geometry-dash-icon {
@@ -175,7 +187,7 @@ body {
 
 .app-name {
     font-size: 12px;
-    color: var(--on-surface-dark);
+    color: white;
     text-align: center;
     width: 100%;
     white-space: nowrap;
@@ -183,7 +195,8 @@ body {
     text-overflow: ellipsis;
     max-width: 65px;
     margin-top: 6px;
-    font-weight: 400;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 /* Общие стили для экранов приложений */
@@ -743,7 +756,7 @@ body {
 
 /* Стили для иконки настроек */
 .settings-icon {
-    background-color: #8E8E93;
+    background: linear-gradient(135deg, #4285F4, #34A853);
 }
 
 /* Стили для экрана настроек */
@@ -853,7 +866,7 @@ input:checked + .slider:before {
 
 /* Стили для камеры */
 .camera-icon {
-    background-color: #FF9500;
+    background: linear-gradient(135deg, #EA4335, #FBBC05);
 }
 
 .camera-container {
@@ -1067,7 +1080,7 @@ input:checked + .slider:before {
 
 /* Стили для Play Market */
 .playmarket-icon {
-    background-color: #01875f;
+    background: linear-gradient(135deg, #EA4335, #4285F4, #34A853, #FBBC05);
 }
 
 .playmarket-search {
@@ -1362,4 +1375,338 @@ button {
     max-width: 100%;
     border-radius: 8px;
     max-height: 200px;
+}
+
+/* Исправленные стили для Dock-панели */
+.dock-container {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    padding: 0 15px;
+}
+
+.dock {
+    display: flex;
+    background-color: rgba(40, 40, 40, 0.8);
+    border-radius: 30px;
+    padding: 12px 20px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    justify-content: space-between;
+}
+
+.dock-app {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dock-app .app-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s;
+}
+
+.dock-app:active .app-icon {
+    transform: scale(0.9);
+}
+
+/* Обновляем стили для иконок в Dock */
+.messages-icon {
+    background: linear-gradient(135deg, #00B4DB, #0083B0);
+}
+
+.chrome-icon {
+    background: linear-gradient(135deg, #EA4335, #4285F4);
+}
+
+/* Стиль для иконки "Контакты" */
+.contacts-icon {
+    background: linear-gradient(135deg, #4285F4, #0F9D58);
+}
+
+/* Стили для приложения "Контакты" */
+.contacts-header {
+    background-color: #4285F4;
+}
+
+.contacts-search {
+    padding: 10px 15px;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 20px;
+    padding: 8px 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar i {
+    color: #757575;
+    margin-right: 10px;
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 16px;
+}
+
+.contacts-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.contact-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    font-size: 18px;
+    color: #757575;
+}
+
+.contact-name {
+    font-size: 16px;
+    color: #212121;
+}
+
+.add-contact-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #4285F4;
+    color: white;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    cursor: pointer;
+}
+
+/* Стили для приложения "Телефон" */
+.phone-header {
+    background-color: #4CD964;
+}
+
+.phone-tabs {
+    display: flex;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.phone-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 0;
+    color: #757575;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.phone-tab.active {
+    color: #4CD964;
+    border-bottom: 2px solid #4CD964;
+}
+
+.phone-content {
+    flex: 1;
+    position: relative;
+}
+
+.dialer-screen, .recent-screen, .contacts-tab-screen {
+    display: none;
+    height: 100%;
+    flex-direction: column;
+}
+
+.active-tab {
+    display: flex;
+}
+
+.dialer-display {
+    display: flex;
+    align-items: center;
+    padding: 20px 15px;
+    background-color: white;
+}
+
+.phone-number {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 24px;
+    text-align: center;
+}
+
+.clear-number {
+    background: none;
+    border: none;
+    color: #757575;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.dialer-pad {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.dialer-row {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 15px;
+}
+
+.dialer-key {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: #f5f5f5;
+    border: none;
+    font-size: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.key-letters {
+    font-size: 10px;
+    color: #757575;
+    margin-top: 2px;
+}
+
+.call-button {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: #4CD964;
+    color: white;
+    border: none;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px auto;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+/* Стили для экрана звонка */
+.incoming-call-screen, .active-call-screen {
+    background-color: #121212;
+    justify-content: space-between;
+    padding: 40px 20px;
+}
+
+.call-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.caller-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+
+.caller-name {
+    font-size: 24px;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.call-status, .call-duration {
+    font-size: 16px;
+    color: #aaa;
+}
+
+.call-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 40px;
+}
+
+.decline-call, .accept-call, .end-call {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: none;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.decline-call, .end-call {
+    background-color: #FF3B30;
+    color: white;
+}
+
+.accept-call {
+    background-color: #4CD964;
+    color: white;
+}
+
+.call-controls {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 40px;
+}
+
+.call-control {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #333;
+    color: white;
+    border: none;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
 } 

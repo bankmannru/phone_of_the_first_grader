@@ -54,6 +54,550 @@ function updateTime() {
     document.querySelector('.time').textContent = `${hours}:${minutes}`;
 }
 
+// Массив контактов
+const contacts = [
+    { id: 1, name: "Мама", phone: "+7 (999) 123-45-67", avatar: "👩" },
+    { id: 2, name: "Папа", phone: "+7 (999) 765-43-21", avatar: "👨" },
+    { id: 3, name: "Бабушка", phone: "+7 (999) 111-22-33", avatar: "👵" },
+    { id: 4, name: "Дедушка", phone: "+7 (999) 444-55-66", avatar: "👴" },
+    { id: 5, name: "Учитель", phone: "+7 (999) 777-88-99", avatar: "👩‍🏫" },
+    { id: 6, name: "Друг Петя", phone: "+7 (999) 222-33-44", avatar: "👦" },
+    { id: 7, name: "Подруга Маша", phone: "+7 (999) 555-66-77", avatar: "👧" }
+];
+
+// Массив недавних звонков
+const recentCalls = [
+    { name: "Мама", time: "Вчера, 18:30", type: "incoming", duration: "5:23" },
+    { name: "Папа", time: "Вчера, 17:15", type: "outgoing", duration: "2:45" },
+    { name: "Бабушка", time: "Позавчера, 12:10", type: "missed", duration: "" },
+    { name: "Учитель", time: "3 дня назад, 14:22", type: "outgoing", duration: "1:30" }
+];
+
+// Инициализация приложения "Контакты"
+function initContacts() {
+    const contactsList = document.querySelector('.contacts-list');
+    contactsList.innerHTML = '';
+    
+    contacts.forEach(contact => {
+        const contactElement = document.createElement('div');
+        contactElement.className = 'contact-item';
+        
+        contactElement.innerHTML = `
+            <div class="contact-avatar">${contact.avatar}</div>
+            <div class="contact-name">${contact.name}</div>
+        `;
+        
+        contactElement.addEventListener('click', () => {
+            openContactDetails(contact);
+        });
+        
+        contactsList.appendChild(contactElement);
+    });
+    
+    // Обработчик для кнопки добавления контакта
+    document.querySelector('.add-contact-button').addEventListener('click', () => {
+        sendPushNotification('Контакты', 'Функция добавления контакта недоступна', '👤');
+    });
+}
+
+// Открытие деталей контакта
+function openContactDetails(contact) {
+    sendPushNotification('Контакты', `Открыт контакт: ${contact.name}`, '👤');
+}
+
+// Инициализация приложения "Телефон"
+function initPhone() {
+    // Инициализация вкладок
+    document.querySelectorAll('.phone-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabName = tab.getAttribute('data-tab');
+            
+            // Активация вкладки
+            document.querySelectorAll('.phone-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            // Показ соответствующего экрана
+            document.querySelectorAll('.dialer-screen, .recent-screen, .contacts-tab-screen').forEach(screen => {
+                screen.classList.remove('active-tab');
+            });
+            
+            if (tabName === 'dialer') {
+                document.querySelector('.dialer-screen').classList.add('active-tab');
+            } else if (tabName === 'recent') {
+                document.querySelector('.recent-screen').classList.add('active-tab');
+                loadRecentCalls();
+            } else if (tabName === 'contacts') {
+                document.querySelector('.contacts-tab-screen').classList.add('active-tab');
+                loadPhoneContacts();
+            }
+        });
+    });
+    
+    // Инициализация клавиатуры набора номера
+    const phoneNumber = document.querySelector('.phone-number');
+    
+    document.querySelectorAll('.dialer-key').forEach(key => {
+        key.addEventListener('click', () => {
+            const digit = key.getAttribute('data-key');
+            phoneNumber.value += digit;
+        });
+    });
+    
+    // Кнопка очистки номера
+    document.querySelector('.clear-number').addEventListener('click', () => {
+        phoneNumber.value = phoneNumber.value.slice(0, -1);
+    });
+    
+    // Кнопка вызова
+    document.querySelector('.call-button').addEventListener('click', () => {
+        if (phoneNumber.value.trim() === '') {
+            sendPushNotification('Телефон', 'Введите номер телефона', '📱');
+            return;
+        }
+        
+        initiateCall(phoneNumber.value);
+    });
+    
+    // Инициализация экрана входящего звонка
+    document.querySelector('.decline-call').addEventListener('click', () => {
+        declineCall();
+    });
+    
+    document.querySelector('.accept-call').addEventListener('click', () => {
+        acceptCall();
+    });
+    
+    // Инициализация экрана активного звонка
+    document.querySelector('.end-call').addEventListener('click', () => {
+        endCall();
+    });
+    
+    document.querySelectorAll('.call-control').forEach(control => {
+        control.addEventListener('click', () => {
+            control.classList.toggle('active');
+        });
+    });
+}
+
+// Загрузка недавних звонков
+function loadRecentCalls() {
+    const recentCallsList = document.querySelector('.recent-calls');
+    recentCallsList.innerHTML = '';
+    
+    recentCalls.forEach(call => {
+        const callElement = document.createElement('div');
+        callElement.className = `recent-call-item ${call.type}`;
+        
+        let icon = '';
+        if (call.type === 'incoming') {
+            icon = '<i class="fas fa-phone-alt incoming-icon"></i>';
+        } else if (call.type === 'outgoing') {
+            icon = '<i class="fas fa-phone-alt outgoing-icon"></i>';
+        } else if (call.type === 'missed') {
+            icon = '<i class="fas fa-phone-slash missed-icon"></i>';
+        }
+        
+        callElement.innerHTML = `
+            <div class="call-icon">${icon}</div>
+            <div class="call-details">
+                <div class="call-name">${call.name}</div>
+                <div class="call-time">${call.time}</div>
+            </div>
+            <button class="call-back"><i class="fas fa-phone-alt"></i></button>
+        `;
+        
+        callElement.querySelector('.call-back').addEventListener('click', () => {
+            initiateCall(call.name);
+        });
+        
+        recentCallsList.appendChild(callElement);
+    });
+}
+
+// Загрузка контактов в приложении "Телефон"
+function loadPhoneContacts() {
+    const contactsList = document.querySelector('.contacts-in-phone');
+    contactsList.innerHTML = '';
+    
+    contacts.forEach(contact => {
+        const contactElement = document.createElement('div');
+        contactElement.className = 'contact-item';
+        
+        contactElement.innerHTML = `
+            <div class="contact-avatar">${contact.avatar}</div>
+            <div class="contact-info">
+                <div class="contact-name">${contact.name}</div>
+                <div class="contact-phone">${contact.phone}</div>
+            </div>
+            <button class="call-contact"><i class="fas fa-phone-alt"></i></button>
+        `;
+        
+        contactElement.querySelector('.call-contact').addEventListener('click', () => {
+            initiateCall(contact.name);
+        });
+        
+        contactsList.appendChild(contactElement);
+    });
+}
+
+// Инициация звонка
+function initiateCall(nameOrNumber) {
+    // Находим контакт по имени или номеру
+    let callerName = nameOrNumber;
+    let callerAvatar = '👤';
+    
+    const contact = contacts.find(c => c.name === nameOrNumber || c.phone === nameOrNumber);
+    if (contact) {
+        callerName = contact.name;
+        callerAvatar = contact.avatar;
+    }
+    
+    // Показываем экран активного звонка
+    document.querySelectorAll('.screen-content').forEach(screen => {
+        screen.classList.remove('active-screen');
+    });
+    
+    document.querySelector('.active-call-screen').classList.add('active-screen');
+    
+    // Обновляем информацию о звонящем
+    document.querySelector('.active-call-screen .caller-name').textContent = callerName;
+    document.querySelector('.active-call-screen .caller-avatar').textContent = callerAvatar;
+    
+    // Запускаем таймер звонка
+    startCallTimer();
+    
+    // Добавляем звонок в историю
+    const now = new Date();
+    const time = `Сегодня, ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+    
+    recentCalls.unshift({
+        name: callerName,
+        time: time,
+        type: 'outgoing',
+        duration: '0:00'
+    });
+}
+
+// Входящий звонок
+function incomingCall(callerName = 'Мама') {
+    // Находим контакт
+    const contact = contacts.find(c => c.name === callerName);
+    let callerAvatar = '👤';
+    
+    if (contact) {
+        callerAvatar = contact.avatar;
+    }
+    
+    // Показываем экран входящего звонка
+    document.querySelectorAll('.screen-content').forEach(screen => {
+        screen.classList.remove('active-screen');
+    });
+    
+    document.querySelector('.incoming-call-screen').classList.add('active-screen');
+    
+    // Обновляем информацию о звонящем
+    document.querySelector('.incoming-call-screen .caller-name').textContent = callerName;
+    document.querySelector('.incoming-call-screen .caller-avatar').textContent = callerAvatar;
+    
+    // Воспроизводим звук звонка
+    playRingtone();
+}
+
+// Принятие звонка
+function acceptCall() {
+    // Останавливаем звук звонка
+    stopRingtone();
+    
+    // Показываем экран активного звонка
+    document.querySelectorAll('.screen-content').forEach(screen => {
+        screen.classList.remove('active-screen');
+    });
+    
+    document.querySelector('.active-call-screen').classList.add('active-screen');
+    
+    // Копируем информацию о звонящем
+    const callerName = document.querySelector('.incoming-call-screen .caller-name').textContent;
+    const callerAvatar = document.querySelector('.incoming-call-screen .caller-avatar').textContent;
+    
+    document.querySelector('.active-call-screen .caller-name').textContent = callerName;
+    document.querySelector('.active-call-screen .caller-avatar').textContent = callerAvatar;
+    
+    // Запускаем таймер звонка
+    startCallTimer();
+    
+    // Добавляем звонок в историю
+    const now = new Date();
+    const time = `Сегодня, ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+    
+    recentCalls.unshift({
+        name: callerName,
+        time: time,
+        type: 'incoming',
+        duration: '0:00'
+    });
+}
+
+// Отклонение звонка
+function declineCall() {
+    // Останавливаем звук звонка
+    stopRingtone();
+    
+    // Возвращаемся на предыдущий экран
+    document.querySelector('.incoming-call-screen').classList.remove('active-screen');
+    document.querySelector('.home-screen').classList.add('active-screen');
+    
+    // Добавляем пропущенный звонок в историю
+    const callerName = document.querySelector('.incoming-call-screen .caller-name').textContent;
+    const now = new Date();
+    const time = `Сегодня, ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+    
+    recentCalls.unshift({
+        name: callerName,
+        time: time,
+        type: 'missed',
+        duration: ''
+    });
+    
+    // Показываем уведомление о пропущенном звонке
+    sendPushNotification('Телефон', `Пропущенный вызов от ${callerName}`, '📱');
+}
+
+// Завершение звонка
+function endCall() {
+    // Останавливаем таймер звонка
+    stopCallTimer();
+    
+    // Возвращаемся на предыдущий экран
+    document.querySelector('.active-call-screen').classList.remove('active-screen');
+    document.querySelector('.home-screen').classList.add('active-screen');
+    
+    // Обновляем длительность последнего звонка в истории
+    if (recentCalls.length > 0) {
+        recentCalls[0].duration = document.querySelector('.call-duration').textContent;
+    }
+}
+
+// Таймер звонка
+let callTimer;
+let callSeconds = 0;
+
+function startCallTimer() {
+    callSeconds = 0;
+    updateCallDuration();
+    
+    callTimer = setInterval(() => {
+        callSeconds++;
+        updateCallDuration();
+    }, 1000);
+}
+
+function stopCallTimer() {
+    clearInterval(callTimer);
+}
+
+function updateCallDuration() {
+    const minutes = Math.floor(callSeconds / 60);
+    const seconds = callSeconds % 60;
+    
+    document.querySelector('.call-duration').textContent = 
+        `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// Звук звонка
+function playRingtone() {
+    // Имитация звука звонка
+    console.log('Звук звонка: дрррр-дрррр');
+}
+
+function stopRingtone() {
+    // Остановка звука звонка
+    console.log('Звук звонка остановлен');
+}
+
+// Обновляем функцию инициализации приложений
+function initApps() {
+    // Обработчик нажатия на иконки приложений
+    document.querySelectorAll('.app').forEach(app => {
+        app.addEventListener('click', () => {
+            const appName = app.getAttribute('data-app');
+            openApp(appName);
+        });
+    });
+    
+    // Обработчик нажатия на кнопку "Домой" в приложениях
+    document.querySelectorAll('.home-button-app').forEach(button => {
+        button.addEventListener('click', () => {
+            goToHomeScreen();
+        });
+    });
+    
+    // Обработчик нажатия на кнопку "Назад" в чате
+    document.querySelector('.chat-back').addEventListener('click', () => {
+        document.querySelector('.chat-screen').classList.remove('active-screen');
+        document.querySelector('.whatsapp-screen').classList.add('active-screen');
+    });
+    
+    // Обработчик нажатия на кнопку "Домой" внизу экрана
+    document.querySelector('.home-button').addEventListener('click', () => {
+        goToHomeScreen();
+    });
+    
+    // Добавляем бейджи с уведомлениями на иконки приложений
+    updateAppBadges();
+    
+    // Инициализация Dock-приложений
+    initDockApps();
+    
+    // Инициализация Flood-режима
+    initFloodMode();
+    
+    // Инициализация чата с возможностью отправки сообщений
+    initChatInput();
+    
+    // Инициализация приложения "Контакты"
+    initContacts();
+    
+    // Инициализация приложения "Телефон"
+    initPhone();
+    
+    // Добавляем случайный входящий звонок через некоторое время
+    setTimeout(() => {
+        // Случайный выбор контакта для звонка
+        const randomContact = contacts[Math.floor(Math.random() * contacts.length)];
+        incomingCall(randomContact.name);
+    }, 60000 + Math.random() * 120000); // Звонок через 1-3 минуты
+}
+
+// Обновляем функцию открытия приложений
+function openApp(appName) {
+    // Скрываем все экраны
+    document.querySelectorAll('.screen-content, .home-screen').forEach(screen => {
+        screen.classList.remove('active-screen');
+    });
+    
+    // Открываем нужный экран
+    switch(appName) {
+        case 'geometrydash':
+            document.querySelector('.geometry-dash-screen').classList.add('active-screen');
+            break;
+        case 'whatsapp':
+            document.querySelector('.whatsapp-screen').classList.add('active-screen');
+            
+            // Сбрасываем счетчик непрочитанных сообщений
+            let totalUnread = 0;
+            chats.forEach(chat => {
+                totalUnread += chat.unread;
+                chat.unread = 0;
+            });
+            
+            // Обновляем UI
+            initWhatsApp();
+            updateAppBadges();
+            break;
+        case 'phone':
+            document.querySelector('.phone-screen').classList.add('active-screen');
+            break;
+        case 'settings':
+            document.querySelector('.settings-screen').classList.add('active-screen');
+            break;
+        case 'camera':
+            document.querySelector('.camera-screen').classList.add('active-screen');
+            break;
+        case 'playmarket':
+            document.querySelector('.playmarket-screen').classList.add('active-screen');
+            initPlayMarket();
+            break;
+        case 'contacts':
+            document.querySelector('.contacts-screen').classList.add('active-screen');
+            initContacts();
+            break;
+        case 'messages':
+            // Показываем уведомление, что приложение недоступно
+            sendPushNotification('Система', 'Приложение "Сообщения" недоступно', '📱');
+            document.querySelector('.home-screen').classList.add('active-screen');
+            break;
+        case 'chrome':
+            // Показываем уведомление, что приложение недоступно
+            sendPushNotification('Система', 'Приложение "Chrome" недоступно', '🌐');
+            document.querySelector('.home-screen').classList.add('active-screen');
+            break;
+        default:
+            document.querySelector('.home-screen').classList.add('active-screen');
+    }
+}
+
+// Добавляем стили для недавних звонков
+document.head.insertAdjacentHTML('beforeend', `
+<style>
+.recent-call-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.call-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.incoming-icon {
+    color: #4CD964;
+}
+
+.outgoing-icon {
+    color: #007AFF;
+}
+
+.missed-icon {
+    color: #FF3B30;
+}
+
+.call-details {
+    flex: 1;
+}
+
+.call-name {
+    font-size: 16px;
+    color: #212121;
+}
+
+.call-time {
+    font-size: 14px;
+    color: #757575;
+}
+
+.call-back, .call-contact {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4CD964;
+    color: white;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.contact-phone {
+    font-size: 14px;
+    color: #757575;
+}
+
+.contact-info {
+    flex: 1;
+}
+</style>
+`);
+
 // Инициализация приложений
 function initApps() {
     // Обработчик нажатия на иконки приложений
@@ -85,33 +629,54 @@ function initApps() {
     // Добавляем бейджи с уведомлениями на иконки приложений
     updateAppBadges();
     
+    // Инициализация Dock-приложений
+    initDockApps();
+    
     // Инициализация Flood-режима
     initFloodMode();
     
     // Инициализация чата с возможностью отправки сообщений
     initChatInput();
     
-    // Инициализация режима "Хакер"
-    initHackerMode();
+    // Инициализация приложения "Контакты"
+    initContacts();
     
-    // Инициализация игры "Змейка"
-    initSnakeGame();
+    // Инициализация приложения "Телефон"
+    initPhone();
+    
+    // Добавляем случайный входящий звонок через некоторое время
+    setTimeout(() => {
+        // Случайный выбор контакта для звонка
+        const randomContact = contacts[Math.floor(Math.random() * contacts.length)];
+        incomingCall(randomContact.name);
+    }, 60000 + Math.random() * 120000); // Звонок через 1-3 минуты
 }
 
 // Открытие приложения
 function openApp(appName) {
-    document.querySelectorAll('.screen-content').forEach(screen => {
+    // Скрываем все экраны
+    document.querySelectorAll('.screen-content, .home-screen').forEach(screen => {
         screen.classList.remove('active-screen');
     });
     
-    document.querySelector('.home-screen').classList.remove('active-screen');
-    
-    switch (appName) {
+    // Открываем нужный экран
+    switch(appName) {
         case 'geometrydash':
             document.querySelector('.geometry-dash-screen').classList.add('active-screen');
             break;
         case 'whatsapp':
             document.querySelector('.whatsapp-screen').classList.add('active-screen');
+            
+            // Сбрасываем счетчик непрочитанных сообщений
+            let totalUnread = 0;
+            chats.forEach(chat => {
+                totalUnread += chat.unread;
+                chat.unread = 0;
+            });
+            
+            // Обновляем UI
+            initWhatsApp();
+            updateAppBadges();
             break;
         case 'phone':
             document.querySelector('.phone-screen').classList.add('active-screen');
@@ -127,6 +692,18 @@ function openApp(appName) {
             document.querySelector('.playmarket-screen').classList.add('active-screen');
             initPlayMarket();
             break;
+        case 'messages':
+            // Показываем уведомление, что приложение недоступно
+            sendPushNotification('Система', 'Приложение "Сообщения" недоступно', '📱');
+            document.querySelector('.home-screen').classList.add('active-screen');
+            break;
+        case 'chrome':
+            // Показываем уведомление, что приложение недоступно
+            sendPushNotification('Система', 'Приложение "Chrome" недоступно', '🌐');
+            document.querySelector('.home-screen').classList.add('active-screen');
+            break;
+        default:
+            document.querySelector('.home-screen').classList.add('active-screen');
     }
 }
 
@@ -1806,6 +2383,16 @@ function initPlayMarket() {
         app.addEventListener('click', () => {
             const appName = app.querySelector('.app-title').textContent;
             sendPushNotification('Play Market', `Для скачивания ${appName} требуется разрешение родителей`, '🔒');
+        });
+    });
+}
+
+// Инициализация Dock-приложений
+function initDockApps() {
+    document.querySelectorAll('.dock-app').forEach(app => {
+        app.addEventListener('click', () => {
+            const appName = app.getAttribute('data-app');
+            openApp(appName);
         });
     });
 } 
