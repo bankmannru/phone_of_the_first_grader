@@ -44,6 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Имитация кнопки "Недавние приложения"
         sendPushNotification('Система', 'Недавние приложения', '📱');
     });
+
+    initFullscreenMode();
 });
 
 // Обновление времени
@@ -96,13 +98,13 @@ function initContacts() {
     
     // Обработчик для кнопки добавления контакта
     document.querySelector('.add-contact-button').addEventListener('click', () => {
-        sendPushNotification('Контакты', 'Функция добавления контакта недоступна', '👤');
+        sendPushNotification('Контакты', 'Функция добавления контакта недоступна', '<span class="material-symbols-outlined">person_add</span>');
     });
 }
 
 // Открытие деталей контакта
 function openContactDetails(contact) {
-    sendPushNotification('Контакты', `Открыт контакт: ${contact.name}`, '👤');
+    sendPushNotification('Контакты', `Открыт контакт: ${contact.name}`, '<span class="material-symbols-outlined">person</span>');
 }
 
 // Инициализация приложения "Телефон"
@@ -151,7 +153,7 @@ function initPhone() {
     // Кнопка вызова
     document.querySelector('.call-button').addEventListener('click', () => {
         if (phoneNumber.value.trim() === '') {
-            sendPushNotification('Телефон', 'Введите номер телефона', '📱');
+            sendPushNotification('Телефон', 'Введите номер телефона', '<span class="material-symbols-outlined">phone</span>');
             return;
         }
         
@@ -359,7 +361,7 @@ function declineCall() {
     });
     
     // Показываем уведомление о пропущенном звонке
-    sendPushNotification('Телефон', `Пропущенный вызов от ${callerName}`, '📱');
+    sendPushNotification('Телефон', `Пропущенный вызов от ${callerName}`, '<span class="material-symbols-outlined">phone</span>');
 }
 
 // Завершение звонка
@@ -466,9 +468,6 @@ function initApps() {
         const randomContact = contacts[Math.floor(Math.random() * contacts.length)];
         incomingCall(randomContact.name);
     }, 60000 + Math.random() * 120000); // Звонок через 1-3 минуты
-    
-    // Инициализация поисковой строки
-    initSearchBar();
 }
 
 // Обновляем функцию открытия приложений
@@ -477,6 +476,15 @@ function openApp(appName) {
     document.querySelectorAll('.screen-content, .home-screen').forEach(screen => {
         screen.classList.remove('active-screen');
     });
+    
+    // Проверяем, является ли это веб-приложением
+    if (appName.startsWith('webapp_')) {
+        const url = atob(appName.replace('webapp_', ''));
+        const appElement = document.querySelector(`[data-app="${appName}"]`);
+        const name = appElement.querySelector('.app-name').textContent;
+        openWebApp(url, name);
+        return;
+    }
     
     // Открываем нужный экран
     switch(appName) {
@@ -516,12 +524,12 @@ function openApp(appName) {
             break;
         case 'messages':
             // Показываем уведомление, что приложение недоступно
-            sendPushNotification('Система', 'Приложение "Сообщения" недоступно', '📱');
+            sendPushNotification('Система', 'Приложение "Сообщения" недоступно', '<span class="material-symbols-outlined">message</span>');
             document.querySelector('.home-screen').classList.add('active-screen');
             break;
         case 'chrome':
             // Показываем уведомление, что приложение недоступно
-            sendPushNotification('Система', 'Приложение "Web" недоступно', '🌐');
+            sendPushNotification('Система', 'Приложение "Web" недоступно', '<span class="material-symbols-outlined">language</span>');
             document.querySelector('.home-screen').classList.add('active-screen');
             break;
         default:
@@ -653,9 +661,6 @@ function initApps() {
         const randomContact = contacts[Math.floor(Math.random() * contacts.length)];
         incomingCall(randomContact.name);
     }, 60000 + Math.random() * 120000); // Звонок через 1-3 минуты
-    
-    // Инициализация поисковой строки
-    initSearchBar();
 }
 
 // Открытие приложения
@@ -664,6 +669,15 @@ function openApp(appName) {
     document.querySelectorAll('.screen-content, .home-screen').forEach(screen => {
         screen.classList.remove('active-screen');
     });
+    
+    // Проверяем, является ли это веб-приложением
+    if (appName.startsWith('webapp_')) {
+        const url = atob(appName.replace('webapp_', ''));
+        const appElement = document.querySelector(`[data-app="${appName}"]`);
+        const name = appElement.querySelector('.app-name').textContent;
+        openWebApp(url, name);
+        return;
+    }
     
     // Открываем нужный экран
     switch(appName) {
@@ -700,12 +714,12 @@ function openApp(appName) {
             break;
         case 'messages':
             // Показываем уведомление, что приложение недоступно
-            sendPushNotification('Система', 'Приложение "Сообщения" недоступно', '📱');
+            sendPushNotification('Система', 'Приложение "Сообщения" недоступно', '<span class="material-symbols-outlined">message</span>');
             document.querySelector('.home-screen').classList.add('active-screen');
             break;
         case 'chrome':
             // Показываем уведомление, что приложение недоступно
-            sendPushNotification('Система', 'Приложение "Web" недоступно', '🌐');
+            sendPushNotification('Система', 'Приложение "Web" недоступно', '<span class="material-symbols-outlined">language</span>');
             document.querySelector('.home-screen').classList.add('active-screen');
             break;
         default:
@@ -881,7 +895,7 @@ function scheduleIncomingCalls() {
 function showIncomingCall(call) {
     // Если мы на домашнем экране, сначала показываем push-уведомление
     if (document.querySelector('.home-screen').classList.contains('active-screen')) {
-        sendPushNotification('Телефон', `Входящий звонок: ${call.name}`, '📞', 1000);
+        sendPushNotification('Телефон', `Входящий звонок: ${call.name}`, '<span class="material-symbols-outlined">phone</span>', 1000);
         
         // Задержка перед показом экрана входящего звонка
         setTimeout(() => {
@@ -1186,7 +1200,7 @@ function showNotification(sender, message, avatar) {
         }, 3000);
     } else {
         // Если мы на домашнем экране, показываем push-уведомление
-        sendPushNotification('WhatsApp', `${sender}: ${message}`, '📱');
+        sendPushNotification('WhatsApp', `${sender}: ${message}`, '<span class="material-symbols-outlined">message</span>');
     }
     
     // Обновление бейджей на иконках приложений
@@ -1380,143 +1394,113 @@ let floodNotificationInterval;
 
 // Функция инициализации Flood-режима
 function initFloodMode() {
-    // Получаем переключатель из настроек (а не с домашнего экрана)
     const floodToggle = document.getElementById('floodModeToggle');
+    const floodModeItem = document.getElementById('floodModeItem');
     
-    if (!floodToggle) {
-        console.error('Переключатель Flood-режима не найден!');
-        return;
-    }
-    
-    floodToggle.addEventListener('change', function() {
-        if (this.checked) {
-            // Включаем Flood-режим
+    if (!floodToggle || !floodModeItem) return;
+
+    function handleFloodModeChange(event) {
+        const isEnabled = event.target.selected;
+        
+        if (isEnabled) {
             document.querySelector('.phone').classList.add('flood-mode-active');
             startFloodMode();
-            
-            // Добавляем анимацию к элементу настроек
-            const floodModeItem = document.getElementById('floodModeItem');
-            if (floodModeItem) {
-                floodModeItem.style.backgroundColor = 'rgba(255, 59, 48, 0.1)';
-            }
-            
-            // Показываем уведомление о включении режима
-            sendPushNotification('Система', 'Flood-режим активирован! Держись крепче!', '<span class="material-symbols-outlined">warning</span>');
+            floodModeItem.style.backgroundColor = 'rgba(255, 59, 48, 0.1)';
+            sendPushNotification('Настройки', 'Flood-режим включен', '<span class="material-symbols-outlined">error</span>');
         } else {
-            // Выключаем Flood-режим
             document.querySelector('.phone').classList.remove('flood-mode-active');
             stopFloodMode();
-            
-            // Возвращаем обычный фон элементу настроек
-            const floodModeItem = document.getElementById('floodModeItem');
-            if (floodModeItem) {
-                floodModeItem.style.backgroundColor = 'white';
-            }
-            
-            // Показываем уведомление о выключении режима
-            sendPushNotification('Система', 'Flood-режим деактивирован', '<span class="material-symbols-outlined">check_circle</span>');
+            floodModeItem.style.backgroundColor = '';
+            sendPushNotification('Настройки', 'Flood-режим отключен', '<span class="material-symbols-outlined">info</span>');
         }
-    });
-    
-    // Добавляем эффект "секретной функции"
-    const floodModeItem = document.getElementById('floodModeItem');
-    if (floodModeItem) {
-        floodModeItem.addEventListener('click', function(e) {
-            // Не активируем при клике на переключатель
-            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SPAN' && e.target.tagName !== 'LABEL') {
-                // Показываем подсказку
-                sendPushNotification('Настройки', 'Это секретная функция для крутых пацанов!', '<span class="material-symbols-outlined">local_fire_department</span>');
-            }
-        });
     }
+
+    floodToggle.addEventListener('input', handleFloodModeChange);
+    floodToggle.addEventListener('change', handleFloodModeChange);
+
+    // Показываем подсказку при клике на элемент настроек
+    floodModeItem.addEventListener('click', (e) => {
+        // Не показываем подсказку, если клик был по переключателю
+        if (e.target.closest('md-switch')) return;
+        sendPushNotification('Подсказка', 'Flood-режим вызывает хаос в телефоне', '<span class="material-symbols-outlined">lightbulb</span>');
+    });
 }
 
 // Функция запуска Flood-режима
 function startFloodMode() {
-    console.log('Запуск Flood-режима');
+    // Очищаем существующие интервалы, если они есть
+    stopFloodMode();
     
-    // Начинаем спамить звонками каждые 5-10 секунд
+    // Спам звонками каждые 5-10 секунд
     floodCallInterval = setInterval(() => {
-        // Выбираем случайный контакт для звонка
         const randomCallIndex = Math.floor(Math.random() * incomingCalls.length);
         const randomCall = incomingCalls[randomCallIndex];
-        
-        // Показываем входящий звонок
         showIncomingCall(randomCall);
-    }, Math.random() * 5000 + 5000); // 5-10 секунд
+    }, Math.random() * 5000 + 5000);
     
-    // Начинаем спамить сообщениями каждые 2-5 секунд
+    // Спам сообщениями каждые 2-5 секунд
     floodMessageInterval = setInterval(() => {
-        // Выбираем случайный чат
         const randomChatIndex = Math.floor(Math.random() * chats.length);
         const chat = chats[randomChatIndex];
         
-        // Случайное сообщение в зависимости от отправителя
-        let messageText = '';
-        switch (chat.name) {
-            case 'Мама':
-                messageText = ['ГДЕ ТЫ???', 'СРОЧНО ПЕРЕЗВОНИ!!!', 'ПОЧЕМУ НЕ ОТВЕЧАЕШЬ?!', 'НЕМЕДЛЕННО ДОМОЙ!!!'][Math.floor(Math.random() * 4)];
-                break;
-            case 'Папа':
-                messageText = ['Перезвони срочно!', 'Где деньги?', 'Ты где пропал?', 'Мама волнуется!'][Math.floor(Math.random() * 4)];
-                break;
-            case 'Бабушка':
-                messageText = ['Внучек, ответь!', 'Я волнуюсь!', 'Позвони бабушке!', 'Ты кушал сегодня???'][Math.floor(Math.random() * 4)];
-                break;
-            case 'Алкаш':
-                messageText = ['ОТДАЙ МОИ ДЕНЬГИ!!!', 'Я ЖДУ ТЕБЯ У ШКОЛЫ!!!', 'ТЫ ГДЕ ПРЯЧЕШЬСЯ???', 'ВЫХОДИ ПОГОВОРИМ!!!'][Math.floor(Math.random() * 4)];
-                break;
-            case 'Одноклассник Петя':
-                messageText = ['Ответь срочно!', 'Тебя ищет физрук!', 'За тобой пришли!', 'Ты попал в неприятности!'][Math.floor(Math.random() * 4)];
-                break;
-        }
+        const messageTexts = {
+            'Мама': ['ГДЕ ТЫ???', 'СРОЧНО ПЕРЕЗВОНИ!!!', 'ПОЧЕМУ НЕ ОТВЕЧАЕШЬ?!', 'НЕМЕДЛЕННО ДОМОЙ!!!'],
+            'Папа': ['Перезвони срочно!', 'Где деньги?', 'Ты где пропал?', 'Мама волнуется!'],
+            'Бабушка': ['Внучек, ответь!', 'Я волнуюсь!', 'Позвони бабушке!', 'Ты кушал сегодня???'],
+            'Алкаш': ['ОТДАЙ МОИ ДЕНЬГИ!!!', 'Я ЖДУ ТЕБЯ У ШКОЛЫ!!!', 'ТЫ ГДЕ ПРЯЧЕШЬСЯ???', 'ВЫХОДИ ПОГОВОРИМ!!!'],
+            'Одноклассник Петя': ['Ответь срочно!', 'Тебя ищет физрук!', 'За тобой пришли!', 'Ты попал в неприятности!']
+        };
         
-        // Текущее время
+        const messages = messageTexts[chat.name] || ['СРОЧНО!!!', 'ОТВЕТЬ!!!', 'ГДЕ ТЫ???'];
+        const messageText = messages[Math.floor(Math.random() * messages.length)];
+        
         const now = new Date();
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        const time = `${hours}:${minutes}`;
+        const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
         
-        // Добавление сообщения в чат
-        const newMessage = {
+        chat.messages.push({
             text: messageText,
             time: time,
             received: true
-        };
+        });
         
-        chat.messages.push(newMessage);
         chat.lastMessage = messageText;
         chat.time = time;
         chat.unread++;
         
-        // Обновление UI и показ уведомления
         updateChatUI(chat);
         showNotification(chat.name, messageText, chat.avatar);
-    }, Math.random() * 3000 + 2000); // 2-5 секунд
+    }, Math.random() * 3000 + 2000);
     
-    // Также добавим случайные push-уведомления от других приложений
+    // Спам уведомлениями каждые 3-7 секунд
     floodNotificationInterval = setInterval(() => {
-        const apps = [
-            { title: 'Instagram', message: 'У вас новое сообщение!', icon: '📷' },
-            { title: 'TikTok', message: 'Ваше видео набирает популярность!', icon: '🎵' },
-            { title: 'Школа', message: 'СРОЧНО! Родительское собрание!', icon: '🏫' },
-            { title: 'Банк', message: 'Ваша карта заблокирована!', icon: '💳' },
-            { title: 'Неизвестный номер', message: 'Перезвоните по номеру +7********45', icon: '❓' }
+        const notifications = [
+            { title: 'Instagram', message: 'СРОЧНО ЗАЙДИ В АККАУНТ!!!', icon: '<span class="material-symbols-outlined">photo</span>' },
+            { title: 'TikTok', message: 'ТВОЕ ВИДЕО УДАЛЯТ ЧЕРЕЗ 5 МИНУТ!', icon: '<span class="material-symbols-outlined">music_note</span>' },
+            { title: 'Школа', message: 'ВНЕПЛАНОВОЕ СОБРАНИЕ! ЯВКА СТРОГО ОБЯЗАТЕЛЬНА!', icon: '<span class="material-symbols-outlined">school</span>' },
+            { title: 'Банк', message: 'ВАША КАРТА ЗАБЛОКИРОВАНА! СРОЧНО ПОЗВОНИТЕ!', icon: '<span class="material-symbols-outlined">credit_card</span>' },
+            { title: 'Неизвестный номер', message: 'ВАШ АККАУНТ ВЗЛОМАН! ПЕРЕЗВОНИТЕ!', icon: '<span class="material-symbols-outlined">error</span>' }
         ];
         
-        const randomApp = apps[Math.floor(Math.random() * apps.length)];
-        sendPushNotification(randomApp.title, randomApp.message, randomApp.icon);
-    }, Math.random() * 4000 + 3000); // 3-7 секунд
+        const notification = notifications[Math.floor(Math.random() * notifications.length)];
+        sendPushNotification(notification.title, notification.message, notification.icon);
+    }, Math.random() * 4000 + 3000);
 }
 
 // Функция остановки Flood-режима
 function stopFloodMode() {
-    console.log('Остановка Flood-режима');
-    
-    // Очищаем интервалы
-    if (floodCallInterval) clearInterval(floodCallInterval);
-    if (floodMessageInterval) clearInterval(floodMessageInterval);
-    if (floodNotificationInterval) clearInterval(floodNotificationInterval);
+    // Очищаем все интервалы
+    if (floodCallInterval) {
+        clearInterval(floodCallInterval);
+        floodCallInterval = null;
+    }
+    if (floodMessageInterval) {
+        clearInterval(floodMessageInterval);
+        floodMessageInterval = null;
+    }
+    if (floodNotificationInterval) {
+        clearInterval(floodNotificationInterval);
+        floodNotificationInterval = null;
+    }
 }
 
 // Вспомогательная функция для обновления UI чата
@@ -2003,7 +1987,7 @@ function initCamera() {
     
     // Сохранение фото
     function savePhoto() {
-        sendPushNotification('Камера', 'Фото сохранено в галерею', '📷');
+        sendPushNotification('Камера', 'Фото сохранено в галерею', '<span class="material-symbols-outlined">photo</span>');
         
         // Добавляем фото в галерею (имитация)
         setTimeout(() => {
@@ -2047,7 +2031,7 @@ function initCamera() {
             app.addEventListener('click', () => {
                 const appName = app.getAttribute('data-app');
                 shareDialog.remove();
-                sendPushNotification('Камера', `Фото отправлено через ${appName}`, '📷');
+                sendPushNotification('Камера', `Фото отправлено через ${appName}`, '<span class="material-symbols-outlined">share</span>');
                 
                 setTimeout(() => {
                     document.querySelector('.photo-view-screen').classList.remove('active-screen');
@@ -2074,14 +2058,14 @@ function initHackerMode() {
         if (this.checked) {
             // Включаем режим "Хакер"
             document.querySelector('.phone').classList.add('hacker-mode-active');
-            sendPushNotification('Система', 'Режим "Хакер" активирован', '💻');
+            sendPushNotification('Система', 'Режим "Хакер" активирован', '<span class="material-symbols-outlined">computer</span>');
             
             // Добавляем эффект "взлома"
             showHackingEffect();
         } else {
             // Выключаем режим "Хакер"
             document.querySelector('.phone').classList.remove('hacker-mode-active');
-            sendPushNotification('Система', 'Режим "Хакер" деактивирован', '✅');
+            sendPushNotification('Система', 'Режим "Хакер" деактивирован', '<span class="material-symbols-outlined">computer</span>');
         }
     });
     
@@ -2104,7 +2088,7 @@ function initHackerMode() {
                 return;
             }
             
-            sendPushNotification('ХАКЕР', hackingTexts[count], '🔓');
+            sendPushNotification('ХАКЕР', hackingTexts[count], '<span class="material-symbols-outlined">computer</span>');
             count++;
         }, 1500);
     }
@@ -2328,26 +2312,41 @@ function initSnakeGame() {
 
 // Функция инициализации Play Market
 function initPlayMarket() {
+    const webAppUrl = document.getElementById('webAppUrl');
+    const webAppName = document.getElementById('webAppName');
+    const installButton = document.getElementById('installWebApp');
     const searchInput = document.querySelector('.search-input');
-    const searchItems = document.querySelectorAll('.search-item');
-    
-    // Обработчик клика по истории поиска
-    searchItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const searchText = item.querySelector('span').textContent;
-            searchInput.value = searchText;
+
+    // Обработчик установки веб-приложения
+    installButton.addEventListener('click', () => {
+        const url = webAppUrl.value.trim();
+        const name = webAppName.value.trim();
+
+        if (!url || !name) {
+            sendPushNotification('Play Market', 'Введите URL и название приложения', '<span class="material-symbols-outlined">error</span>');
+            return;
+        }
+
+        installWebApp(url, name);
+    });
+
+    // Обработчик для рекомендуемых приложений
+    document.querySelectorAll('.recommended-app').forEach(app => {
+        app.addEventListener('click', () => {
+            const url = app.getAttribute('data-url');
+            const name = app.querySelector('.app-title').textContent;
+            const icon = app.querySelector('img').src;
             
-            // Показываем уведомление о невозможности скачать
+            // Показываем уведомление об установке
+            sendPushNotification('Play Market', `Установка ${name}...`, '<span class="material-symbols-outlined">download</span>');
+            
+            // Устанавливаем приложение
             setTimeout(() => {
-                if (searchText.includes('взлома') || searchText.includes('читы') || searchText.includes('бесплатно')) {
-                    sendPushNotification('Play Market', 'Приложение не найдено или содержит вирусы', '🛑');
-                } else {
-                    sendPushNotification('Play Market', 'Для скачивания требуется разрешение родителей', '🔒');
-                }
-            }, 1000);
+                installWebApp(url, name);
+            }, 1500);
         });
     });
-    
+
     // Обработчик ввода в поле поиска
     searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -2371,9 +2370,9 @@ function initPlayMarket() {
                         searchText.toLowerCase().includes('чит') || 
                         searchText.toLowerCase().includes('бесплатно') ||
                         searchText.toLowerCase().includes('без вирусов')) {
-                        sendPushNotification('Play Market', 'Приложение не найдено или содержит вирусы', '🛑');
+                        sendPushNotification('Play Market', 'Приложение не найдено или содержит вирусы', '<span class="material-symbols-outlined">error</span>');
                     } else {
-                        sendPushNotification('Play Market', 'Для скачивания требуется разрешение родителей', '🔒');
+                        sendPushNotification('Play Market', 'Для скачивания требуется разрешение родителей', '<span class="material-symbols-outlined">lock</span>');
                     }
                 }, 1000);
                 
@@ -2382,14 +2381,100 @@ function initPlayMarket() {
             }
         }
     });
+}
+
+// Функция для установки веб-приложения
+function installWebApp(url, name) {
+    const appGrid = document.querySelector('.app-grid');
+    const newApp = document.createElement('div');
+    newApp.className = 'app';
+    newApp.setAttribute('data-app', 'webapp_' + btoa(url).replace(/=/g, ''));
+
+    // Создаем базовый URL для получения favicon
+    const urlObj = new URL(url);
+    const iconUrl = `${urlObj.protocol}//${urlObj.hostname}/favicon.ico`;
     
-    // Обработчик клика по рекомендуемым приложениям
-    document.querySelectorAll('.recommended-app').forEach(app => {
-        app.addEventListener('click', () => {
-            const appName = app.querySelector('.app-title').textContent;
-            sendPushNotification('Play Market', `Для скачивания ${appName} требуется разрешение родителей`, '🔒');
-        });
+    // Создаем временное изображение для проверки наличия favicon
+    const tempImg = new Image();
+    tempImg.onload = () => {
+        // Если favicon загрузился успешно, используем его
+        newApp.innerHTML = `
+            <div class="app-icon webapp-icon">
+                <img src="${iconUrl}" alt="${name}" class="webapp-icon-img" style="width: 32px; height: 32px;">
+            </div>
+            <div class="app-name">${name}</div>
+            <div class="app-badge"></div>
+        `;
+    };
+    
+    tempImg.onerror = () => {
+        // Если favicon не загрузился, используем иконку по умолчанию
+        console.log('Failed to load favicon for:', url);
+        newApp.innerHTML = `
+            <div class="app-icon webapp-icon">
+                <span class="material-symbols-outlined">web</span>
+            </div>
+            <div class="app-name">${name}</div>
+            <div class="app-badge"></div>
+        `;
+    };
+    
+    // Начинаем загрузку favicon
+    tempImg.src = iconUrl;
+
+    // Добавляем обработчик для открытия веб-приложения
+    newApp.addEventListener('click', () => {
+        openWebApp(url, name);
     });
+
+    appGrid.appendChild(newApp);
+
+    // Очищаем поля ввода если они заполнены
+    const webAppUrl = document.getElementById('webAppUrl');
+    const webAppName = document.getElementById('webAppName');
+    if (webAppUrl) webAppUrl.value = '';
+    if (webAppName) webAppName.value = '';
+
+    sendPushNotification('Play Market', `Приложение "${name}" установлено`, '<span class="material-symbols-outlined">check</span>');
+    goToHomeScreen();
+}
+
+// Функция для открытия веб-приложения
+function openWebApp(url, name) {
+    // Скрываем все экраны
+    document.querySelectorAll('.screen-content, .home-screen').forEach(screen => {
+        screen.classList.remove('active-screen');
+    });
+
+    // Показываем экран веб-приложения
+    const webappScreen = document.querySelector('.webapp-screen');
+    const webappTitle = webappScreen.querySelector('.webapp-title');
+    const webappFrame = document.getElementById('webappFrame');
+
+    // Добавляем обработку ошибок для iframe
+    webappFrame.onerror = () => {
+        sendPushNotification('Ошибка', 'Не удалось загрузить приложение', '<span class="material-symbols-outlined">error</span>');
+        goToHomeScreen();
+    };
+
+    // Обновляем заголовок
+    webappTitle.textContent = name;
+
+    // Добавляем обработчик для кнопки "Домой"
+    const homeButton = webappScreen.querySelector('.home-button-app');
+    homeButton.onclick = () => {
+        goToHomeScreen();
+    };
+
+    // Загружаем URL в iframe с обработкой ошибок
+    try {
+        webappFrame.src = url;
+        webappScreen.classList.add('active-screen');
+    } catch (error) {
+        console.error('Error loading web app:', error);
+        sendPushNotification('Ошибка', 'Не удалось открыть приложение', '<span class="material-symbols-outlined">error</span>');
+        goToHomeScreen();
+    }
 }
 
 // Инициализация Dock-приложений
@@ -2402,33 +2487,45 @@ function initDockApps() {
     });
 }
 
-// Инициализация поисковой строки
-function initSearchBar() {
-    const searchInput = document.querySelector('.pixel-search-bar .search-input');
-    const micIcon = document.querySelector('.pixel-search-bar .mic-icon');
+function initFullscreenMode() {
+    const fullscreenToggle = document.getElementById('fullscreenToggle');
+    const phone = document.querySelector('.phone');
     
-    // Обработчик нажатия на Enter в поисковой строке
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const searchQuery = searchInput.value.trim();
-            if (searchQuery) {
-                // Показываем уведомление о поиске
-                sendPushNotification('Поиск', `Поиск: "${searchQuery}"`, '🔍');
-                searchInput.value = '';
+    // Функция для включения/выключения полноэкранного режима
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            phone.requestFullscreen().catch(err => {
+                console.log(`Ошибка: ${err.message}`);
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
             }
         }
+    }
+
+    // Автоматически включаем полноэкранный режим при загрузке
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!document.fullscreenElement) {
+            toggleFullscreen();
+        }
     });
-    
-    // Обработчик нажатия на иконку микрофона
-    micIcon.addEventListener('click', () => {
-        sendPushNotification('Голосовой поиск', 'Голосовой поиск недоступен', '🎤');
+
+    // Обработчик переключателя
+    if (fullscreenToggle) {
+        fullscreenToggle.addEventListener('click', () => {
+            toggleFullscreen();
+        });
+    }
+
+    // Следим за изменениями полноэкранного режима
+    document.addEventListener('fullscreenchange', () => {
+        if (fullscreenToggle) {
+            fullscreenToggle.selected = !!document.fullscreenElement;
+        }
     });
 }
 
-// Обновляем функцию инициализации приложений
-function initApps() {
-    // Существующий код...
-    
-    // Инициализация поисковой строки
-    initSearchBar();
-} 
+// Добавляем вызов функции при загрузке страницы
+document.addEventListener('DOMContentLoaded', initFullscreenMode);
+  
