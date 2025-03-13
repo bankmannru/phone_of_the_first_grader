@@ -2,24 +2,41 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#000000">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Телефон первоклассника</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@material/web/": "https://esm.run/@material/web/"
+        }
+      }
+    </script>
+    <script type="module">
+      import '@material/web/all.js';
+      import {styles as typescaleStyles} from '@material/web/typography/md-typescale-styles.js';
+  
+      document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
+    </script>
 </head>
 <body>
     <div class="phone">
         <div class="phone-header">
             <div class="status-bar">
-                <span class="time">12:30</span>
+                <span class="time" style="font-size: 15px; font-family: 'Roboto';">12:30</span>
                 <div class="status-icons">
-                    <i class="fas fa-wifi"></i>
-                    <i class="fas fa-signal"></i>
-                    <i class="fas fa-battery-three-quarters"></i>
+                    <span class="material-symbols-outlined">
+                        signal_wifi_4_bar
+                    </span>
+                    <span class="material-symbols-outlined">
+                        network_cell
+                     </span>
+                    <span class="material-symbols-outlined">
+                        battery_full
+                    </span>
                 </div>
             </div>
             <div class="speaker"></div>
@@ -32,7 +49,9 @@
                 <div class="app-grid">
                     <div class="app" data-app="geometrydash">
                         <div class="app-icon geometry-dash-icon">
-                            <i class="fas fa-cube"></i>
+                            <span class="material-symbols-outlined">
+                                sports_esports
+                            </span>
                         </div>
                         <div class="app-name">Geometry Dash</div>
                         <div class="app-badge"></div>
@@ -46,51 +65,47 @@
                     </div>
                     <div class="app" data-app="phone">
                         <div class="app-icon phone-icon">
-                            <i class="fas fa-phone"></i>
+                            <span class="material-symbols-outlined">
+                                phone
+                            </span>
                         </div>
                         <div class="app-name">Телефон</div>
                         <div class="app-badge"></div>
                     </div>
                     <div class="app" data-app="settings">
                         <div class="app-icon settings-icon">
-                            <i class="fas fa-cog"></i>
+                            <span class="material-symbols-outlined">
+                                settings
+                            </span>
                         </div>
                         <div class="app-name">Настройки</div>
                         <div class="app-badge"></div>
                     </div>
                     <div class="app" data-app="camera">
                         <div class="app-icon camera-icon">
-                            <i class="fas fa-camera"></i>
+                            <span class="material-symbols-outlined">
+                                photo_camera
+                            </span>
                         </div>
                         <div class="app-name">Камера</div>
                         <div class="app-badge"></div>
                     </div>
                     <div class="app" data-app="playmarket">
                         <div class="app-icon playmarket-icon">
-                            <i class="fab fa-google-play"></i>
+                            <span class="material-symbols-outlined">
+                                store
+                            </span>
                         </div>
-                        <div class="app-name">Play Market</div>
+                        <div class="app-name">App Market</div>
                         <div class="app-badge"></div>
                     </div>
                     <div class="app" data-app="contacts">
                         <div class="app-icon contacts-icon">
-                            <i class="fas fa-address-book"></i>
+                            <span class="material-symbols-outlined">
+                                contacts
+                            </span>
                         </div>
                         <div class="app-name">Контакты</div>
-                        <div class="app-badge"></div>
-                    </div>
-                    <div class="app" data-app="messages">
-                        <div class="app-icon messages-icon">
-                            <i class="fas fa-comment"></i>
-                        </div>
-                        <div class="app-name">Сообщения</div>
-                        <div class="app-badge"></div>
-                    </div>
-                    <div class="app" data-app="chrome">
-                        <div class="app-icon chrome-icon">
-                            <i class="fab fa-chrome"></i>
-                        </div>
-                        <div class="app-name">Chrome</div>
                         <div class="app-badge"></div>
                     </div>
                 </div>
@@ -99,24 +114,40 @@
                     <div class="dock">
                         <div class="dock-app" data-app="phone">
                             <div class="app-icon phone-icon">
-                                <i class="fas fa-phone"></i>
+                                <span class="material-symbols-outlined">
+                                        phone
+                                </span>
                             </div>
                         </div>
                         <div class="dock-app" data-app="messages">
                             <div class="app-icon messages-icon">
-                                <i class="fas fa-comment-alt"></i>
+                                <span class="material-symbols-outlined">
+                                    chat
+                                </span>
                             </div>
                         </div>
                         <div class="dock-app" data-app="camera">
                             <div class="app-icon camera-icon">
-                                <i class="fas fa-camera"></i>
+                                <span class="material-symbols-outlined">
+                                    photo_camera
+                                </span>
                             </div>
                         </div>
                         <div class="dock-app" data-app="chrome">
                             <div class="app-icon chrome-icon">
-                                <i class="fab fa-chrome"></i>
+                                <span class="material-symbols-outlined">
+                                    web
+                                </span>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <!-- Добавляем поисковую строку под Dock-панелью -->
+                <div class="search-bar-container">
+                    <div class="pixel-search-bar">
+                        <span class="material-symbols-outlined search-icon">search</span>
+                        <input type="text" placeholder="Поиск" class="search-input">
+                        <span class="material-symbols-outlined mic-icon">mic</span>
                     </div>
                 </div>
             </div>
@@ -124,7 +155,9 @@
             <!-- Экран Geometry Dash -->
             <div class="geometry-dash-screen screen-content">
                 <div class="game-header">
-                    <button class="home-button-app"><i class="fas fa-home"></i></button>
+                    <button class="home-button-app"><span class="material-symbols-outlined">
+                        home
+                    </span></button>
                     <h2>Geometry Dash</h2>
                 </div>
                 <div class="game-container">
@@ -136,7 +169,9 @@
             <!-- Экран WhatsApp -->
             <div class="whatsapp-screen screen-content">
                 <div class="app-header whatsapp-header">
-                    <button class="home-button-app"><i class="fas fa-home"></i></button>
+                    <button class="home-button-app"><span class="material-symbols-outlined">
+                        home
+                    </span></button>
                     <h2>WhatsApp</h2>
                 </div>
                 <div class="chat-list">
@@ -147,7 +182,9 @@
             <!-- Экран чата WhatsApp -->
             <div class="chat-screen screen-content">
                 <div class="chat-header">
-                    <button class="back-button chat-back"><i class="fas fa-arrow-left"></i></button>
+                    <button class="back-button chat-back"><span class="material-symbols-outlined">
+                        arrow_back
+                    </span></button>
                     <div class="chat-contact">
                         <div class="contact-avatar"></div>
                         <div class="contact-name"></div>
@@ -158,14 +195,17 @@
                 </div>
                 <div class="chat-input-container">
                     <input type="text" class="chat-input" placeholder="Введите сообщение...">
-                    <button class="send-message"><i class="fas fa-paper-plane"></i></button>
+                    <md-icon-button class="send-message"><span class="material-symbols-outlined">
+                        send
+                    </span></md-icon-button>
                 </div>
             </div>
-            
             <!-- Экран телефона -->
             <div class="phone-screen screen-content">
                 <div class="app-header phone-header">
-                    <button class="home-button-app"><i class="fas fa-home"></i></button>
+                    <button class="home-button-app"><span class="material-symbols-outlined">
+                        home
+                    </span></button>
                     <h2>Телефон</h2>
                 </div>
                 <div class="phone-tabs">
@@ -177,7 +217,9 @@
                     <div class="dialer-screen active-tab">
                         <div class="dialer-display">
                             <input type="text" class="phone-number" readonly>
-                            <button class="clear-number"><i class="fas fa-backspace"></i></button>
+                            <md-icon-button class="clear-number"><span class="material-symbols-outlined">
+                                backspace
+                            </span></md-icon-button>
                         </div>
                         <div class="dialer-pad">
                             <div class="dialer-row">
@@ -201,9 +243,11 @@
                                 <button class="dialer-key" data-key="#">#</button>
                             </div>
                         </div>
-                        <button class="call-button">
-                            <i class="fas fa-phone"></i>
-                        </button>
+                        <md-icon-button class="call-button">
+                            <span class="material-symbols-outlined">
+                                phone
+                            </span>
+                        </md-icon-button>
                     </div>
                     <div class="recent-screen">
                         <div class="recent-calls">
@@ -227,10 +271,14 @@
                 </div>
                 <div class="call-actions">
                     <button class="decline-call">
-                        <i class="fas fa-phone-slash"></i>
+                        <span class="material-symbols-outlined">
+                            phone_disabled
+                        </span>
                     </button>
                     <button class="accept-call">
-                        <i class="fas fa-phone"></i>
+                        <span class="material-symbols-outlined">
+                            phone
+                        </span>
                     </button>
                 </div>
             </div>
@@ -244,24 +292,34 @@
                 </div>
                 <div class="call-controls">
                     <button class="call-control mute-call">
-                        <i class="fas fa-microphone-slash"></i>
+                        <span class="material-symbols-outlined">
+                            mic_off
+                        </span>
                     </button>
                     <button class="call-control speaker-call">
-                        <i class="fas fa-volume-up"></i>
+                        <span class="material-symbols-outlined">
+                            volume_up
+                        </span>
                     </button>
                     <button class="call-control keypad-call">
-                        <i class="fas fa-keyboard"></i>
+                        <span class="material-symbols-outlined">
+                            keyboard
+                        </span>
                     </button>
                 </div>
                 <button class="end-call">
-                    <i class="fas fa-phone-slash"></i>
+                    <span class="material-symbols-outlined">
+                        phone_disabled
+                    </span>
                 </button>
             </div>
             
             <!-- Экран настроек -->
             <div class="settings-screen screen-content">
                 <div class="app-header settings-header">
-                    <button class="home-button-app"><i class="fas fa-home"></i></button>
+                    <button class="home-button-app"><span class="material-symbols-outlined">
+                        home
+                    </span></button>
                     <h2>Настройки</h2>
                 </div>
                 <div class="settings-list">
@@ -281,10 +339,7 @@
                         <div class="settings-item" id="floodModeItem">
                             <div class="settings-item-name">Flood-режим</div>
                             <div class="settings-item-value">
-                                <label class="switch">
-                                    <input type="checkbox" id="floodModeToggle">
-                                    <span class="slider round"></span>
-                                </label>
+                                <md-switch id="floodModeToggle"></md-switch>
                             </div>
                         </div>
                     </div>
@@ -293,16 +348,13 @@
                         <div class="settings-item" id="hackerModeItem">
                             <div class="settings-item-name">Режим "Хакер"</div>
                             <div class="settings-item-value">
-                                <label class="switch">
-                                    <input type="checkbox" id="hackerModeToggle">
-                                    <span class="slider round"></span>
-                                </label>
+                                <md-switch id="hackerModeToggle"></md-switch>
                             </div>
                         </div>
                         <div class="settings-item" id="snakeGameItem">
                             <div class="settings-item-name">Змейка</div>
                             <div class="settings-item-value">
-                                <i class="fas fa-gamepad"></i>
+                                <md-switch id="snakeGameToggle"></md-switch>
                             </div>
                         </div>
                     </div>
@@ -312,7 +364,9 @@
             <!-- Экран камеры -->
             <div class="camera-screen screen-content">
                 <div class="app-header camera-header">
-                    <button class="home-button-app"><i class="fas fa-home"></i></button>
+                    <button class="home-button-app"><span class="material-symbols-outlined">
+                        home
+                    </span></button>
                     <h2>Камера</h2>
                 </div>
                 <div class="camera-container">
@@ -321,7 +375,9 @@
                         <canvas id="cameraCanvas" style="display: none;"></canvas>
                     </div>
                     <div class="camera-controls">
-                        <button class="take-photo"><i class="fas fa-circle"></i></button>
+                        <button class="take-photo"><span class="material-symbols-outlined">
+                            circle
+                        </span></button>
                     </div>
                 </div>
             </div>
@@ -329,22 +385,30 @@
             <!-- Экран просмотра фото -->
             <div class="photo-view-screen screen-content">
                 <div class="app-header photo-header">
-                    <button class="back-button photo-back"><i class="fas fa-arrow-left"></i></button>
+                    <button class="back-button photo-back"><span class="material-symbols-outlined">
+                        arrow_back
+                    </span></button>
                     <h2>Фото</h2>
                 </div>
                 <div class="photo-container">
                     <img id="capturedPhoto" src="" alt="Captured Photo">
                 </div>
                 <div class="photo-controls">
-                    <button class="save-photo"><i class="fas fa-save"></i> Сохранить</button>
-                    <button class="share-photo"><i class="fas fa-share"></i> Поделиться</button>
+                    <md-icon-button class="save-photo"><span class="material-symbols-outlined">
+                        save
+                    </span></md-icon-button>
+                    <md-icon-button class="share-photo"><span class="material-symbols-outlined">
+                        share
+                    </span></md-icon-button>
                 </div>
             </div>
             
             <!-- Экран игры "Змейка" -->
             <div class="snake-game-screen screen-content">
                 <div class="app-header snake-header">
-                    <button class="back-button snake-back"><i class="fas fa-arrow-left"></i></button>
+                    <button class="back-button snake-back"><span class="material-symbols-outlined">
+                        arrow_back
+                    </span></button>
                     <h2>Змейка</h2>
                 </div>
                 <div class="game-container">
@@ -356,12 +420,16 @@
             <!-- Экран Play Market -->
             <div class="playmarket-screen screen-content">
                 <div class="app-header playmarket-header">
-                    <button class="home-button-app"><i class="fas fa-home"></i></button>
+                    <button class="home-button-app"><span class="material-symbols-outlined">
+                        home
+                    </span></button>
                     <h2>Play Market</h2>
                 </div>
                 <div class="playmarket-search">
                     <div class="search-bar">
-                        <i class="fas fa-search"></i>
+                        <md-icon-button class="search-icon"><span class="material-symbols-outlined">
+                            search
+                        </span></md-icon-button>
                         <input type="text" placeholder="Поиск приложений и игр" class="search-input">
                     </div>
                 </div>
@@ -437,7 +505,9 @@
             <!-- Экран приложения "Контакты" -->
             <div class="contacts-screen screen-content">
                 <div class="app-header contacts-header">
-                    <button class="home-button-app"><i class="fas fa-home"></i></button>
+                    <button class="home-button-app"><span class="material-symbols-outlined">
+                        home
+                    </span></button>
                     <h2>Контакты</h2>
                 </div>
                 <div class="contacts-search">
@@ -450,131 +520,24 @@
                     <!-- Контакты будут добавлены через JavaScript -->
                 </div>
                 <button class="add-contact-button">
-                    <i class="fas fa-plus"></i>
+                    <span class="material-symbols-outlined">
+                        add
+                    </span>
                 </button>
-            </div>
-
-            <!-- Добавляем экран приложения "Сообщения" -->
-            <div class="screen-content messages-screen">
-                <div class="app-header messages-header">
-                    <button class="home-button-app"><i class="fas fa-home"></i></button>
-                    <h2>Сообщения</h2>
-                </div>
-                <div class="messages-list">
-                    <!-- Сообщения будут добавлены через JavaScript -->
-                </div>
-                <button class="new-message-button">
-                    <i class="fas fa-plus"></i>
-                </button>
-            </div>
-
-            <!-- Добавляем экран приложения "Chrome" -->
-            <div class="screen-content chrome-screen">
-                <div class="app-header chrome-header">
-                    <button class="home-button-app"><i class="fas fa-home"></i></button>
-                    <h2>Chrome</h2>
-                </div>
-                <div class="chrome-address-bar">
-                    <i class="fas fa-lock"></i>
-                    <input type="text" placeholder="Поиск или введите URL">
-                </div>
-                <div class="chrome-content">
-                    <div class="chrome-bookmarks">
-                        <div class="bookmark-item">
-                            <div class="bookmark-icon" style="background-color: #4285f4;">
-                                <i class="fab fa-google" style="color: white;"></i>
-                            </div>
-                            <div class="bookmark-name">Google</div>
-                        </div>
-                        <div class="bookmark-item">
-                            <div class="bookmark-icon" style="background-color: #ff0000;">
-                                <i class="fab fa-youtube" style="color: white;"></i>
-                            </div>
-                            <div class="bookmark-name">YouTube</div>
-                        </div>
-                        <div class="bookmark-item">
-                            <div class="bookmark-icon" style="background-color: #3b5998;">
-                                <i class="fab fa-vk" style="color: white;"></i>
-                            </div>
-                            <div class="bookmark-name">ВКонтакте</div>
-                        </div>
-                        <div class="bookmark-item">
-                            <div class="bookmark-icon" style="background-color: #ff6600;">
-                                <i class="fas fa-gamepad" style="color: white;"></i>
-                            </div>
-                            <div class="bookmark-name">Игры</div>
-                        </div>
-                    </div>
-                    
-                    <div class="chrome-history">
-                        <div class="history-title">История</div>
-                        <div class="history-item">
-                            <div class="history-icon">
-                                <i class="fab fa-youtube" style="color: #ff0000;"></i>
-                            </div>
-                            <div class="history-content">
-                                <div class="history-name">Как скачать бесплатно Minecraft</div>
-                                <div class="history-url">youtube.com</div>
-                            </div>
-                            <div class="history-time">Сегодня, 10:30</div>
-                        </div>
-                        <div class="history-item">
-                            <div class="history-icon">
-                                <i class="fas fa-search"></i>
-                            </div>
-                            <div class="history-content">
-                                <div class="history-name">читы на роблокс бесплатно</div>
-                                <div class="history-url">google.com</div>
-                            </div>
-                            <div class="history-time">Сегодня, 09:15</div>
-                        </div>
-                        <div class="history-item">
-                            <div class="history-icon">
-                                <i class="fas fa-search"></i>
-                            </div>
-                            <div class="history-content">
-                                <div class="history-name">как стать хакером за 5 минут</div>
-                                <div class="history-url">google.com</div>
-                            </div>
-                            <div class="history-time">Вчера, 18:45</div>
-                        </div>
-                        <div class="history-item">
-                            <div class="history-icon">
-                                <i class="fas fa-search"></i>
-                            </div>
-                            <div class="history-content">
-                                <div class="history-name">как взломать игру на деньги</div>
-                                <div class="history-url">google.com</div>
-                            </div>
-                            <div class="history-time">Вчера, 17:20</div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
         
         <div class="phone-footer">
-            <div class="nav-button back-nav"><i class="fas fa-arrow-left"></i></div>
+            <div class="nav-button back-nav"><span class="material-symbols-outlined">
+                arrow_back
+            </span></div>
             <div class="home-button"></div>
-            <div class="nav-button recent-nav"><i class="fas fa-square"></i></div>
+            <div class="nav-button recent-nav"><span class="material-symbols-outlined">
+                square
+            </span></div>
         </div>
     </div>
     
-    <!-- Добавляем экран блокировки -->
-    <div class="lock-screen">
-        <div class="lock-time">12:30</div>
-        <div class="lock-date">Понедельник, 1 сентября</div>
-        <div class="lock-hint">Проведите вверх для разблокировки</div>
-        <div class="lock-swipe-indicator">
-            <i class="fas fa-chevron-up"></i>
-        </div>
-    </div>
-    
-    <!-- Добавляем плавающую кнопку "Домой" -->
-    <button class="floating-home-button">
-        <i class="fas fa-home"></i>
-    </button>
-
     <script src="messages.js"></script>
     <script src="geometrydash.js"></script>
     <script src="script.js"></script>

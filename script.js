@@ -44,15 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Имитация кнопки "Недавние приложения"
         sendPushNotification('Система', 'Недавние приложения', '📱');
     });
-    
-    // Инициализация экрана блокировки
-    initLockScreen();
-    
-    // Функция инициализации полноэкранного режима
-    initFullscreenMode();
-    
-    // Обновление функции инициализации
-    initUI();
 });
 
 // Обновление времени
@@ -475,79 +466,66 @@ function initApps() {
         const randomContact = contacts[Math.floor(Math.random() * contacts.length)];
         incomingCall(randomContact.name);
     }, 60000 + Math.random() * 120000); // Звонок через 1-3 минуты
+    
+    // Инициализация поисковой строки
+    initSearchBar();
 }
 
-// Добавление анимаций при переключении экранов
+// Обновляем функцию открытия приложений
 function openApp(appName) {
-    // Анимация исчезновения текущего экрана
-    const currentScreen = document.querySelector('.active-screen');
-    if (currentScreen) {
-        currentScreen.style.animation = 'fadeOut 0.2s ease forwards';
-        
-        setTimeout(() => {
-            // Скрываем все экраны
-            document.querySelectorAll('.screen-content, .home-screen').forEach(screen => {
-                screen.classList.remove('active-screen');
-                screen.style.animation = '';
+    // Скрываем все экраны
+    document.querySelectorAll('.screen-content, .home-screen').forEach(screen => {
+        screen.classList.remove('active-screen');
+    });
+    
+    // Открываем нужный экран
+    switch(appName) {
+        case 'geometrydash':
+            document.querySelector('.geometry-dash-screen').classList.add('active-screen');
+            break;
+        case 'whatsapp':
+            document.querySelector('.whatsapp-screen').classList.add('active-screen');
+            
+            // Сбрасываем счетчик непрочитанных сообщений
+            let totalUnread = 0;
+            chats.forEach(chat => {
+                totalUnread += chat.unread;
+                chat.unread = 0;
             });
             
-            // Открываем нужный экран с анимацией
-            let targetScreen;
-            
-            switch(appName) {
-                case 'geometrydash':
-                    targetScreen = document.querySelector('.geometry-dash-screen');
-                    break;
-                case 'whatsapp':
-                    targetScreen = document.querySelector('.whatsapp-screen');
-                    
-                    // Сбрасываем счетчик непрочитанных сообщений
-                    let totalUnread = 0;
-                    chats.forEach(chat => {
-                        totalUnread += chat.unread;
-                        chat.unread = 0;
-                    });
-                    
-                    // Обновляем UI
-                    initWhatsApp();
-                    updateAppBadges();
-                    break;
-                case 'phone':
-                    targetScreen = document.querySelector('.phone-screen');
-                    break;
-                case 'settings':
-                    targetScreen = document.querySelector('.settings-screen');
-                    break;
-                case 'camera':
-                    targetScreen = document.querySelector('.camera-screen');
-                    break;
-                case 'playmarket':
-                    targetScreen = document.querySelector('.playmarket-screen');
-                    initPlayMarket();
-                    break;
-                case 'contacts':
-                    targetScreen = document.querySelector('.contacts-screen');
-                    initContacts();
-                    break;
-                case 'messages':
-                    // Показываем уведомление, что приложение недоступно
-                    sendPushNotification('Система', 'Приложение "Сообщения" недоступно', '📱');
-                    targetScreen = document.querySelector('.home-screen');
-                    break;
-                case 'chrome':
-                    // Показываем уведомление, что приложение недоступно
-                    sendPushNotification('Система', 'Приложение "Chrome" недоступно', '🌐');
-                    targetScreen = document.querySelector('.home-screen');
-                    break;
-                default:
-                    targetScreen = document.querySelector('.home-screen');
-            }
-            
-            if (targetScreen) {
-                targetScreen.classList.add('active-screen');
-                targetScreen.style.animation = 'fadeIn 0.3s ease forwards';
-            }
-        }, 200);
+            // Обновляем UI
+            initWhatsApp();
+            updateAppBadges();
+            break;
+        case 'phone':
+            document.querySelector('.phone-screen').classList.add('active-screen');
+            break;
+        case 'settings':
+            document.querySelector('.settings-screen').classList.add('active-screen');
+            break;
+        case 'camera':
+            document.querySelector('.camera-screen').classList.add('active-screen');
+            break;
+        case 'playmarket':
+            document.querySelector('.playmarket-screen').classList.add('active-screen');
+            initPlayMarket();
+            break;
+        case 'contacts':
+            document.querySelector('.contacts-screen').classList.add('active-screen');
+            initContacts();
+            break;
+        case 'messages':
+            // Показываем уведомление, что приложение недоступно
+            sendPushNotification('Система', 'Приложение "Сообщения" недоступно', '📱');
+            document.querySelector('.home-screen').classList.add('active-screen');
+            break;
+        case 'chrome':
+            // Показываем уведомление, что приложение недоступно
+            sendPushNotification('Система', 'Приложение "Web" недоступно', '🌐');
+            document.querySelector('.home-screen').classList.add('active-screen');
+            break;
+        default:
+            document.querySelector('.home-screen').classList.add('active-screen');
     }
 }
 
@@ -675,6 +653,9 @@ function initApps() {
         const randomContact = contacts[Math.floor(Math.random() * contacts.length)];
         incomingCall(randomContact.name);
     }, 60000 + Math.random() * 120000); // Звонок через 1-3 минуты
+    
+    // Инициализация поисковой строки
+    initSearchBar();
 }
 
 // Открытие приложения
@@ -724,7 +705,7 @@ function openApp(appName) {
             break;
         case 'chrome':
             // Показываем уведомление, что приложение недоступно
-            sendPushNotification('Система', 'Приложение "Chrome" недоступно', '🌐');
+            sendPushNotification('Система', 'Приложение "Web" недоступно', '🌐');
             document.querySelector('.home-screen').classList.add('active-screen');
             break;
         default:
@@ -743,12 +724,10 @@ function closeCurrentApp() {
 
 // Переход на домашний экран
 function goToHomeScreen() {
-    // Скрываем все экраны
-    document.querySelectorAll('.screen-content, .home-screen').forEach(screen => {
+    document.querySelectorAll('.screen-content').forEach(screen => {
         screen.classList.remove('active-screen');
     });
     
-    // Показываем домашний экран
     document.querySelector('.home-screen').classList.add('active-screen');
 }
 
@@ -1354,8 +1333,7 @@ style.textContent = `
         align-items: center;
         font-size: 12px;
         margin-right: 8px;
-        background-color: #25D366;
-        color: white;
+        color: black;
     }
     
     .push-notification-app-name {
@@ -1379,10 +1357,10 @@ document.head.appendChild(style);
 function scheduleRandomPushNotifications() {
     // Массив возможных уведомлений
     const possibleNotifications = [
-        { title: 'Школа', message: 'Завтра контрольная по математике!', icon: '🏫', delay: 60000 },
-        { title: 'YouTube', message: 'Новое видео от вашего любимого блогера', icon: '📺', delay: 120000 },
-        { title: 'Игры', message: 'Твой друг приглашает тебя в игру', icon: '🎮', delay: 180000 },
-        { title: 'Погода', message: 'Завтра ожидается дождь, не забудь зонт', icon: '☔', delay: 240000 }
+        { title: 'Школа', message: 'Завтра контрольная по математике!', icon: '<span class="material-symbols-outlined">school</span>', delay: 60000 },
+        { title: 'YouTube', message: 'Новое видео от вашего любимого блогера', icon: '<span class="material-symbols-outlined">play_circle</span>', delay: 120000 },
+        { title: 'Игры', message: 'Твой друг приглашает тебя в игру', icon: '<span class="material-symbols-outlined">gamepad</span>', delay: 180000 },
+        { title: 'Погода', message: 'Завтра ожидается дождь, не забудь зонт', icon: '<span class="material-symbols-outlined">cloud_rain</span>', delay: 240000 }
     ];
     
     // Отправляем случайные уведомления
@@ -1423,7 +1401,7 @@ function initFloodMode() {
             }
             
             // Показываем уведомление о включении режима
-            sendPushNotification('Система', 'Flood-режим активирован! Держись крепче!', '⚠️');
+            sendPushNotification('Система', 'Flood-режим активирован! Держись крепче!', '<span class="material-symbols-outlined">warning</span>');
         } else {
             // Выключаем Flood-режим
             document.querySelector('.phone').classList.remove('flood-mode-active');
@@ -1436,7 +1414,7 @@ function initFloodMode() {
             }
             
             // Показываем уведомление о выключении режима
-            sendPushNotification('Система', 'Flood-режим деактивирован', '✅');
+            sendPushNotification('Система', 'Flood-режим деактивирован', '<span class="material-symbols-outlined">check_circle</span>');
         }
     });
     
@@ -1447,7 +1425,7 @@ function initFloodMode() {
             // Не активируем при клике на переключатель
             if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SPAN' && e.target.tagName !== 'LABEL') {
                 // Показываем подсказку
-                sendPushNotification('Настройки', 'Это секретная функция для крутых пацанов!', '🔥');
+                sendPushNotification('Настройки', 'Это секретная функция для крутых пацанов!', '<span class="material-symbols-outlined">local_fire_department</span>');
             }
         });
     }
@@ -2350,86 +2328,68 @@ function initSnakeGame() {
 
 // Функция инициализации Play Market
 function initPlayMarket() {
-    // Добавляем заголовок
-    const playmarketScreen = document.querySelector('.playmarket-screen');
+    const searchInput = document.querySelector('.search-input');
+    const searchItems = document.querySelectorAll('.search-item');
     
-    if (!playmarketScreen.querySelector('.app-header')) {
-        const header = document.createElement('div');
-        header.className = 'app-header playmarket-header';
-        header.innerHTML = `
-            <button class="home-button-app"><i class="fas fa-home"></i></button>
-            <h2>Play Market</h2>
-        `;
-        
-        // Добавляем обработчик для кнопки "Домой"
-        header.querySelector('.home-button-app').addEventListener('click', goToHomeScreen);
-        
-        // Вставляем заголовок в начало экрана
-        playmarketScreen.insertBefore(header, playmarketScreen.firstChild);
-    }
+    // Обработчик клика по истории поиска
+    searchItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const searchText = item.querySelector('span').textContent;
+            searchInput.value = searchText;
+            
+            // Показываем уведомление о невозможности скачать
+            setTimeout(() => {
+                if (searchText.includes('взлома') || searchText.includes('читы') || searchText.includes('бесплатно')) {
+                    sendPushNotification('Play Market', 'Приложение не найдено или содержит вирусы', '🛑');
+                } else {
+                    sendPushNotification('Play Market', 'Для скачивания требуется разрешение родителей', '🔒');
+                }
+            }, 1000);
+        });
+    });
     
-    // Проверяем, есть ли уже история поиска
-    if (!playmarketScreen.querySelector('.search-history')) {
-        // Добавляем поисковую строку
-        const searchBar = document.createElement('div');
-        searchBar.className = 'search-bar';
-        searchBar.innerHTML = `
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Поиск приложений и игр">
-        `;
-        
-        // Добавляем историю поиска
-        const searchHistory = document.createElement('div');
-        searchHistory.className = 'search-history';
-        searchHistory.innerHTML = `
-            <h3>История поиска</h3>
-            <div class="history-items">
-                <div class="history-item">
+    // Обработчик ввода в поле поиска
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const searchText = searchInput.value.trim();
+            if (searchText) {
+                // Добавляем новый поиск в историю
+                const searchHistory = document.querySelector('.search-history');
+                const newSearchItem = document.createElement('div');
+                newSearchItem.className = 'search-item';
+                newSearchItem.innerHTML = `
                     <i class="fas fa-history"></i>
-                    <span>скачать сбербанк взлома на деньги бесплатно</span>
-                </div>
-                <div class="history-item">
-                    <i class="fas fa-history"></i>
-                    <span>как стать хакером за 5 минут</span>
-                </div>
-                <div class="history-item">
-                    <i class="fas fa-history"></i>
-                    <span>майнкрафт без вирусов скачать</span>
-                </div>
-                <div class="history-item">
-                    <i class="fas fa-history"></i>
-                    <span>как взломать игру на бесконечные деньги</span>
-                </div>
-                <div class="history-item">
-                    <i class="fas fa-history"></i>
-                    <span>читы на фортнайт без бана</span>
-                </div>
-                <div class="history-item">
-                    <i class="fas fa-history"></i>
-                    <span>как скачать роблокс на телефон бесплатно</span>
-                </div>
-                <div class="history-item">
-                    <i class="fas fa-history"></i>
-                    <span>как получить вбаксы бесплатно 2023</span>
-                </div>
-            </div>
-        `;
-        
-        // Вставляем элементы на экран
-        playmarketScreen.insertBefore(searchBar, playmarketScreen.querySelector('.app-categories'));
-        playmarketScreen.insertBefore(searchHistory, playmarketScreen.querySelector('.app-categories'));
-        
-        // Добавляем обработчики для истории поиска
-        searchHistory.querySelectorAll('.history-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const searchText = item.querySelector('span').textContent;
-                searchBar.querySelector('input').value = searchText;
+                    <span>${searchText}</span>
+                `;
+                
+                // Добавляем в начало списка
+                searchHistory.insertBefore(newSearchItem, searchHistory.firstChild);
                 
                 // Показываем уведомление
-                sendPushNotification('Play Market', `Поиск: ${searchText}`, '🔍');
-            });
+                setTimeout(() => {
+                    if (searchText.toLowerCase().includes('взлом') || 
+                        searchText.toLowerCase().includes('чит') || 
+                        searchText.toLowerCase().includes('бесплатно') ||
+                        searchText.toLowerCase().includes('без вирусов')) {
+                        sendPushNotification('Play Market', 'Приложение не найдено или содержит вирусы', '🛑');
+                    } else {
+                        sendPushNotification('Play Market', 'Для скачивания требуется разрешение родителей', '🔒');
+                    }
+                }, 1000);
+                
+                // Очищаем поле ввода
+                searchInput.value = '';
+            }
+        }
+    });
+    
+    // Обработчик клика по рекомендуемым приложениям
+    document.querySelectorAll('.recommended-app').forEach(app => {
+        app.addEventListener('click', () => {
+            const appName = app.querySelector('.app-title').textContent;
+            sendPushNotification('Play Market', `Для скачивания ${appName} требуется разрешение родителей`, '🔒');
         });
-    }
+    });
 }
 
 // Инициализация Dock-приложений
@@ -2442,584 +2402,33 @@ function initDockApps() {
     });
 }
 
-// Улучшенная функция отправки уведомлений
-function sendPushNotification(title, message, icon) {
-    const notificationContainer = document.querySelector('.notification-container') || createNotificationContainer();
+// Инициализация поисковой строки
+function initSearchBar() {
+    const searchInput = document.querySelector('.pixel-search-bar .search-input');
+    const micIcon = document.querySelector('.pixel-search-bar .mic-icon');
     
-    const notification = document.createElement('div');
-    notification.className = 'notification';
-    notification.innerHTML = `
-        <div class="notification-icon">${icon}</div>
-        <div class="notification-content">
-            <div class="notification-title">${title}</div>
-            <div class="notification-message">${message}</div>
-        </div>
-        <button class="notification-close"><i class="fas fa-times"></i></button>
-    `;
-    
-    notificationContainer.appendChild(notification);
-    
-    // Анимация появления
-    setTimeout(() => {
-        notification.classList.add('show');
-    }, 10);
-    
-    // Автоматическое скрытие через 5 секунд
-    setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => {
-            notification.remove();
-        }, 300);
-    }, 5000);
-    
-    // Обработчик закрытия уведомления
-    notification.querySelector('.notification-close').addEventListener('click', () => {
-        notification.classList.remove('show');
-        setTimeout(() => {
-            notification.remove();
-        }, 300);
-    });
-    
-    // Функция создания контейнера для уведомлений
-    function createNotificationContainer() {
-        const container = document.createElement('div');
-        container.className = 'notification-container';
-        document.body.appendChild(container);
-        return container;
-    }
-}
-
-// Инициализация экрана блокировки
-function initLockScreen() {
-    const lockScreen = document.querySelector('.lock-screen');
-    const screen = document.querySelector('.screen');
-    
-    // Обновляем время и дату на экране блокировки
-    function updateLockScreenTime() {
-        const now = new Date();
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        document.querySelector('.lock-time').textContent = `${hours}:${minutes}`;
-        
-        const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
-        const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-        
-        const day = days[now.getDay()];
-        const date = now.getDate();
-        const month = months[now.getMonth()];
-        
-        document.querySelector('.lock-date').textContent = `${day}, ${date} ${month}`;
-    }
-    
-    updateLockScreenTime();
-    setInterval(updateLockScreenTime, 1000);
-    
-    // Обработчик свайпа для разблокировки
-    let startY = 0;
-    
-    lockScreen.addEventListener('touchstart', (e) => {
-        startY = e.touches[0].clientY;
-    });
-    
-    lockScreen.addEventListener('touchmove', (e) => {
-        const currentY = e.touches[0].clientY;
-        const diff = startY - currentY;
-        
-        if (diff > 50) {
-            lockScreen.style.transform = `translateY(-${diff}px)`;
-        }
-    });
-    
-    lockScreen.addEventListener('touchend', (e) => {
-        const currentY = e.changedTouches[0].clientY;
-        const diff = startY - currentY;
-        
-        if (diff > 150) {
-            // Разблокировка
-            lockScreen.style.transform = 'translateY(-100%)';
-            setTimeout(() => {
-                lockScreen.style.display = 'none';
-                document.querySelector('.home-screen').classList.add('active-screen');
-            }, 300);
-        } else {
-            // Возврат на место
-            lockScreen.style.transform = 'translateY(0)';
-        }
-    });
-    
-    // Для десктопа (имитация свайпа с помощью клика)
-    lockScreen.addEventListener('click', () => {
-        lockScreen.style.transform = 'translateY(-100%)';
-        setTimeout(() => {
-            lockScreen.style.display = 'none';
-            document.querySelector('.home-screen').classList.add('active-screen');
-        }, 300);
-    });
-}
-
-// Вызываем функцию инициализации экрана блокировки при загрузке страницы
-document.addEventListener('DOMContentLoaded', () => {
-    initLockScreen();
-});
-
-// Улучшенная функция для включения полноэкранного режима
-function enableFullscreen() {
-    const elem = document.documentElement;
-    
-    try {
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) { /* Safari */
-            elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) { /* IE11 */
-            elem.msRequestFullscreen();
-        } else {
-            // Если полноэкранный режим не поддерживается, просто адаптируем размеры
-            handleOrientationChange();
-        }
-    } catch (e) {
-        console.error("Ошибка при переходе в полноэкранный режим:", e);
-        // Если произошла ошибка, просто адаптируем размеры
-        handleOrientationChange();
-    }
-}
-
-// Улучшенная функция инициализации полноэкранного режима
-function initFullscreenMode() {
-    addFullscreenButton();
-    
-    // Обработчик изменения размера окна
-    window.addEventListener('resize', handleOrientationChange);
-    
-    // Инициализация при загрузке
-    handleOrientationChange();
-    
-    // Обработчик изменения ориентации экрана
-    window.addEventListener('orientationchange', handleOrientationChange);
-    
-    // Автоматический полноэкранный режим на мобильных устройствах
-    if (window.innerWidth <= 767) {
-        // Добавляем кнопку для входа в полноэкранный режим на мобильных устройствах
-        const mobileFullscreenButton = document.createElement('button');
-        mobileFullscreenButton.className = 'mobile-fullscreen-button';
-        mobileFullscreenButton.innerHTML = '<i class="fas fa-expand"></i> Полный экран';
-        document.body.appendChild(mobileFullscreenButton);
-        
-        mobileFullscreenButton.addEventListener('click', () => {
-            enableFullscreen();
-            mobileFullscreenButton.style.display = 'none';
-        });
-    }
-}
-
-// Улучшенный обработчик изменения ориентации экрана
-function handleOrientationChange() {
-    // Обновляем высоту для мобильных браузеров (решение проблемы с адресной строкой)
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-    
-    // Адаптируем размер шрифта в зависимости от размера экрана
-    const fontSize = Math.min(window.innerWidth, window.innerHeight) * 0.04;
-    document.documentElement.style.fontSize = `${fontSize}px`;
-    
-    // Проверяем ориентацию экрана
-    if (window.innerWidth > window.innerHeight) {
-        // Ландшафтная ориентация
-        document.body.classList.add('landscape');
-        document.body.classList.remove('portrait');
-    } else {
-        // Портретная ориентация
-        document.body.classList.add('portrait');
-        document.body.classList.remove('landscape');
-    }
-}
-
-// Добавляем кнопку для включения полноэкранного режима
-function addFullscreenButton() {
-    const fullscreenButton = document.createElement('button');
-    fullscreenButton.className = 'fullscreen-button';
-    fullscreenButton.innerHTML = '<i class="fas fa-expand"></i>';
-    document.body.appendChild(fullscreenButton);
-    
-    fullscreenButton.addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-            enableFullscreen();
-            fullscreenButton.innerHTML = '<i class="fas fa-compress"></i>';
-        } else {
-            exitFullscreen();
-            fullscreenButton.innerHTML = '<i class="fas fa-expand"></i>';
-        }
-    });
-    
-    // Скрываем кнопку на мобильных устройствах
-    if (window.innerWidth <= 767) {
-        fullscreenButton.style.display = 'none';
-    }
-}
-
-// Функция для выхода из полноэкранного режима
-function exitFullscreen() {
-    if (document.exitFullscreen) {
-        document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) { /* Safari */
-        document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) { /* IE11 */
-        document.msExitFullscreen();
-    }
-}
-
-// Вызываем функцию инициализации полноэкранного режима
-document.addEventListener('DOMContentLoaded', () => {
-    initFullscreenMode();
-});
-
-// Добавляем функцию для плавающей кнопки "Домой"
-function addFloatingHomeButton() {
-    const floatingHomeButton = document.createElement('button');
-    floatingHomeButton.className = 'floating-home-button';
-    floatingHomeButton.innerHTML = '<i class="fas fa-home"></i>';
-    document.body.appendChild(floatingHomeButton);
-    
-    floatingHomeButton.addEventListener('click', () => {
-        goToHomeScreen();
-    });
-}
-
-// Обновляем функцию инициализации UI
-function initUI() {
-    // Удаляем добавление верхней кнопки "Домой"
-    // addHomeButton();
-    
-    // Добавляем только плавающую кнопку "Домой"
-    addFloatingHomeButton();
-    
-    // Скрываем кнопку на экране блокировки
-    const lockScreen = document.querySelector('.lock-screen');
-    if (lockScreen) {
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.attributeName === 'style') {
-                    const display = window.getComputedStyle(lockScreen).getPropertyValue('display');
-                    const floatingHomeButton = document.querySelector('.floating-home-button');
-                    
-                    if (display === 'none') {
-                        floatingHomeButton.style.display = 'flex';
-                    } else {
-                        floatingHomeButton.style.display = 'none';
-                    }
-                }
-            });
-        });
-        
-        observer.observe(lockScreen, { attributes: true });
-        
-        // Начальное состояние
-        const floatingHomeButton = document.querySelector('.floating-home-button');
-        floatingHomeButton.style.display = 'none';
-    }
-}
-
-// Вызываем функцию инициализации UI
-document.addEventListener('DOMContentLoaded', () => {
-    initUI();
-});
-
-// Инициализация приложения "Сообщения"
-function initMessages() {
-    const messagesList = document.querySelector('.messages-list');
-    if (!messagesList) return;
-    
-    // Очищаем список сообщений
-    messagesList.innerHTML = '';
-    
-    // Массив сообщений
-    const messages = [
-        { name: "Мама", text: "Как дела в школе?", time: "10:15", avatar: "👩", unread: 2 },
-        { name: "Папа", text: "Не забудь про уроки!", time: "09:30", avatar: "👨", unread: 0 },
-        { name: "Бабушка", text: "Кушал ли ты сегодня?", time: "Вчера", avatar: "👵", unread: 1 },
-        { name: "Учитель", text: "Домашнее задание на завтра: стр. 15, упр. 3", time: "Вчера", avatar: "👩‍🏫", unread: 0 },
-        { name: "Петя", text: "Го в майнкрафт играть после школы", time: "08:45", avatar: "👦", unread: 0 },
-        { name: "Маша", text: "Дай списать домашку по матеше", time: "Вчера", avatar: "👧", unread: 0 },
-        { name: "Неизвестный номер", text: "Привет! Я выиграл в лотерею и хочу поделиться с тобой! Нажми сюда!", time: "07:20", avatar: "🤖", unread: 3 }
-    ];
-    
-    // Добавляем сообщения в список
-    messages.forEach(message => {
-        const messageItem = document.createElement('div');
-        messageItem.className = 'message-item';
-        
-        let unreadBadge = '';
-        if (message.unread > 0) {
-            unreadBadge = `<div class="message-unread">${message.unread}</div>`;
-        }
-        
-        messageItem.innerHTML = `
-            <div class="message-avatar">${message.avatar}</div>
-            <div class="message-content">
-                <div class="message-name">${message.name}</div>
-                <div class="message-text">${message.text}</div>
-            </div>
-            <div class="message-time">${message.time}</div>
-            ${unreadBadge}
-        `;
-        
-        messageItem.addEventListener('click', () => {
-            // Показываем уведомление о родительском контроле
-            if (message.name === "Неизвестный номер") {
-                sendPushNotification('Родительский контроль', 'Обнаружено подозрительное сообщение! Доступ заблокирован.', '🛑');
-            } else {
-                sendPushNotification('Сообщения', `Открыт чат с ${message.name}`, '💬');
-            }
-        });
-        
-        messagesList.appendChild(messageItem);
-    });
-    
-    // Обработчик для кнопки нового сообщения
-    const newMessageButton = document.querySelector('.new-message-button');
-    if (newMessageButton) {
-        newMessageButton.addEventListener('click', () => {
-            sendPushNotification('Сообщения', 'Для создания нового сообщения требуется разрешение родителей', '🔒');
-        });
-    }
-    
-    // Обновляем бейдж с количеством непрочитанных сообщений
-    updateAppBadges();
-}
-
-// Инициализация приложения "Chrome"
-function initChrome() {
-    // Обработчик для адресной строки
-    const addressInput = document.querySelector('.chrome-address-bar input');
-    if (!addressInput) return;
-    
-    addressInput.addEventListener('keypress', (e) => {
+    // Обработчик нажатия на Enter в поисковой строке
+    searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            const url = addressInput.value.trim().toLowerCase();
-            
-            // Проверяем на запрещенные слова
-            const blockedWords = ['взлом', 'чит', 'хакер', 'бесплатно', 'скачать', 'вирус', 'деньги', 'взломать'];
-            
-            let isBlocked = false;
-            blockedWords.forEach(word => {
-                if (url.includes(word)) {
-                    isBlocked = true;
-                }
-            });
-            
-            if (isBlocked) {
-                sendPushNotification('Родительский контроль', 'Доступ к этому сайту заблокирован!', '🛑');
-                
-                // Добавляем смешную анимацию "взлома"
-                showHackingAnimation();
-            } else {
-                sendPushNotification('Chrome', 'Для посещения сайтов требуется разрешение родителей', '🔒');
+            const searchQuery = searchInput.value.trim();
+            if (searchQuery) {
+                // Показываем уведомление о поиске
+                sendPushNotification('Поиск', `Поиск: "${searchQuery}"`, '🔍');
+                searchInput.value = '';
             }
-            
-            // Очищаем поле ввода
-            addressInput.value = '';
         }
     });
     
-    // Обработчики для закладок
-    document.querySelectorAll('.bookmark-item').forEach(bookmark => {
-        bookmark.addEventListener('click', () => {
-            const bookmarkName = bookmark.querySelector('.bookmark-name').textContent;
-            
-            if (bookmarkName === 'Игры') {
-                sendPushNotification('Родительский контроль', 'Доступ к играм ограничен! Сначала сделай домашнее задание!', '🎮');
-                
-                // Добавляем смешную анимацию "грустного смайлика"
-                showSadFaceAnimation();
-            } else {
-                sendPushNotification('Chrome', `Для посещения ${bookmarkName} требуется разрешение родителей`, '🔒');
-            }
-        });
-    });
-    
-    // Обработчики для истории
-    document.querySelectorAll('.history-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const historyName = item.querySelector('.history-name').textContent;
-            
-            // Проверяем на запрещенные слова
-            const blockedWords = ['взлом', 'чит', 'хакер', 'бесплатно', 'скачать', 'вирус', 'деньги', 'взломать'];
-            
-            let isBlocked = false;
-            blockedWords.forEach(word => {
-                if (historyName.toLowerCase().includes(word)) {
-                    isBlocked = true;
-                }
-            });
-            
-            if (isBlocked) {
-                sendPushNotification('Родительский контроль', 'Доступ к этому сайту заблокирован!', '🛑');
-                
-                // Добавляем смешную анимацию "взлома"
-                showHackingAnimation();
-            } else {
-                sendPushNotification('Chrome', 'Для посещения сайтов требуется разрешение родителей', '🔒');
-            }
-        });
+    // Обработчик нажатия на иконку микрофона
+    micIcon.addEventListener('click', () => {
+        sendPushNotification('Голосовой поиск', 'Голосовой поиск недоступен', '🎤');
     });
 }
 
-// Функция для отображения смешной анимации "взлома"
-function showHackingAnimation() {
-    // Создаем элемент для анимации
-    const hackingOverlay = document.createElement('div');
-    hackingOverlay.className = 'hacking-overlay';
-    hackingOverlay.innerHTML = `
-        <div class="hacking-content">
-            <h2>ВНИМАНИЕ! ОБНАРУЖЕН ВИРУС!</h2>
-            <div class="hacking-progress">
-                <div class="progress-bar"></div>
-            </div>
-            <div class="hacking-text">Идет сканирование системы...</div>
-            <div class="hacking-emoji">🚨</div>
-        </div>
-    `;
+// Обновляем функцию инициализации приложений
+function initApps() {
+    // Существующий код...
     
-    document.body.appendChild(hackingOverlay);
-    
-    // Анимация прогресс-бара
-    setTimeout(() => {
-        const progressBar = document.querySelector('.progress-bar');
-        progressBar.style.width = '100%';
-        
-        const hackingText = document.querySelector('.hacking-text');
-        hackingText.textContent = 'Вирус обнаружен и заблокирован!';
-        
-        const hackingEmoji = document.querySelector('.hacking-emoji');
-        hackingEmoji.textContent = '✅';
-        
-        // Удаляем анимацию через 3 секунды
-        setTimeout(() => {
-            hackingOverlay.remove();
-        }, 3000);
-    }, 2000);
-}
-
-// Функция для отображения смешной анимации "грустного смайлика"
-function showSadFaceAnimation() {
-    // Создаем элемент для анимации
-    const sadFaceOverlay = document.createElement('div');
-    sadFaceOverlay.className = 'sad-face-overlay';
-    sadFaceOverlay.innerHTML = `
-        <div class="sad-face-content">
-            <div class="sad-face-emoji">😢</div>
-            <div class="sad-face-text">Сначала нужно сделать домашнее задание!</div>
-            <div class="sad-face-subtext">Мама сказала, что игры только после уроков</div>
-        </div>
-    `;
-    
-    document.body.appendChild(sadFaceOverlay);
-    
-    // Удаляем анимацию через 3 секунды
-    setTimeout(() => {
-        sadFaceOverlay.remove();
-    }, 3000);
-}
-
-// Обновляем функцию открытия приложений
-function openApp(appName) {
-    // Анимация исчезновения текущего экрана
-    const currentScreen = document.querySelector('.active-screen');
-    if (currentScreen) {
-        currentScreen.style.animation = 'fadeOut 0.2s ease forwards';
-        
-        setTimeout(() => {
-            // Скрываем все экраны
-            document.querySelectorAll('.screen-content, .home-screen').forEach(screen => {
-                screen.classList.remove('active-screen');
-                screen.style.animation = '';
-            });
-            
-            // Открываем нужный экран с анимацией
-            let targetScreen;
-            
-            switch(appName) {
-                case 'geometrydash':
-                    targetScreen = document.querySelector('.geometry-dash-screen');
-                    break;
-                case 'whatsapp':
-                    targetScreen = document.querySelector('.whatsapp-screen');
-                    
-                    // Сбрасываем счетчик непрочитанных сообщений
-                    let totalUnread = 0;
-                    chats.forEach(chat => {
-                        totalUnread += chat.unread;
-                        chat.unread = 0;
-                    });
-                    
-                    // Обновляем UI
-                    initWhatsApp();
-                    updateAppBadges();
-                    break;
-                case 'phone':
-                    targetScreen = document.querySelector('.phone-screen');
-                    break;
-                case 'settings':
-                    targetScreen = document.querySelector('.settings-screen');
-                    break;
-                case 'camera':
-                    targetScreen = document.querySelector('.camera-screen');
-                    break;
-                case 'playmarket':
-                    targetScreen = document.querySelector('.playmarket-screen');
-                    initPlayMarket();
-                    break;
-                case 'contacts':
-                    targetScreen = document.querySelector('.contacts-screen');
-                    initContacts();
-                    break;
-                case 'messages':
-                    targetScreen = document.querySelector('.messages-screen');
-                    initMessages();
-                    break;
-                case 'chrome':
-                    targetScreen = document.querySelector('.chrome-screen');
-                    initChrome();
-                    break;
-                default:
-                    targetScreen = document.querySelector('.home-screen');
-            }
-            
-            if (targetScreen) {
-                targetScreen.classList.add('active-screen');
-                targetScreen.style.animation = 'fadeIn 0.3s ease forwards';
-            }
-        }, 200);
-    }
-}
-
-// Обновляем функцию обновления бейджей приложений
-function updateAppBadges() {
-    // Обновляем бейдж WhatsApp
-    let totalUnreadWhatsApp = 0;
-    chats.forEach(chat => {
-        totalUnreadWhatsApp += chat.unread;
-    });
-    
-    const whatsappBadge = document.querySelector('[data-app="whatsapp"] .app-badge');
-    if (whatsappBadge) {
-        whatsappBadge.textContent = totalUnreadWhatsApp > 0 ? totalUnreadWhatsApp : '';
-    }
-    
-    // Обновляем бейдж Сообщений
-    let totalUnreadMessages = 0;
-    const messages = [
-        { name: "Мама", unread: 2 },
-        { name: "Бабушка", unread: 1 },
-        { name: "Неизвестный номер", unread: 3 }
-    ];
-    
-    messages.forEach(message => {
-        totalUnreadMessages += message.unread;
-    });
-    
-    const messagesBadge = document.querySelector('[data-app="messages"] .app-badge');
-    if (messagesBadge) {
-        messagesBadge.textContent = totalUnreadMessages > 0 ? totalUnreadMessages : '';
-    }
-}
+    // Инициализация поисковой строки
+    initSearchBar();
+} 
