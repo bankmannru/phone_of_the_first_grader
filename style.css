@@ -1106,21 +1106,26 @@ input:checked + .slider:before {
 
 .playmarket-search {
     padding: 10px;
-    background-color: #fff;
-    border-bottom: 1px solid #e0e0e0;
+    background-color: var(--surface-dark);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .search-bar {
     display: flex;
     align-items: center;
     background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    border-radius: 24px;
     padding: 8px 15px;
     margin: 8px 0;
+    transition: background-color 0.3s;
+}
+
+.search-bar:focus-within {
+    background-color: rgba(255, 255, 255, 0.15);
 }
 
 .search-bar i {
-    color: #757575;
+    color: var(--on-surface-dark);
     margin-right: 10px;
 }
 
@@ -1130,18 +1135,25 @@ input:checked + .slider:before {
     flex: 1;
     outline: none;
     font-size: 16px;
+    color: var(--on-surface-dark);
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .playmarket-content {
     padding: 15px;
     overflow-y: auto;
     height: calc(100% - 120px);
+    background-color: var(--background-dark);
 }
 
 .playmarket-content h3 {
     font-size: 16px;
-    margin-bottom: 10px;
-    color: #333;
+    margin: 20px 0 10px;
+    color: var(--on-surface-dark);
+    font-weight: 500;
 }
 
 .search-history {
@@ -1151,42 +1163,64 @@ input:checked + .slider:before {
 .search-item {
     display: flex;
     align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #f0f0f0;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    background-color: var(--surface-dark);
+    transition: background-color 0.3s;
+}
+
+.search-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .search-item i {
-    color: #757575;
+    color: var(--on-surface-dark);
     margin-right: 15px;
+    opacity: 0.7;
 }
 
 .search-item span {
-    color: #333;
+    color: var(--on-surface-dark);
     font-size: 14px;
 }
 
 .app-recommendations {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
 }
 
 .recommended-app {
     display: flex;
     align-items: center;
-    padding: 10px;
-    background-color: var(--surface-light);
-    border-radius: 8px;
+    padding: 12px;
+    background-color: var(--surface-dark);
+    border-radius: 12px;
     margin-bottom: 8px;
+    box-shadow: var(--md-elevation-1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.recommended-app:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--md-elevation-2);
+}
+
+.recommended-app:active {
+    transform: translateY(0);
     box-shadow: var(--md-elevation-1);
 }
 
 .app-icon-small {
-    width: 50px;
-    height: 50px;
-    border-radius: 8px;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
     overflow: hidden;
     margin-right: 15px;
+    background-color: var(--surface-dark);
+    box-shadow: var(--md-elevation-1);
 }
 
 .app-icon-small img {
@@ -1200,44 +1234,64 @@ input:checked + .slider:before {
 }
 
 .app-title {
-    font-weight: bold;
-    margin-bottom: 5px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: var(--on-surface-dark);
 }
 
 .app-rating {
-    font-size: 12px;
-    color: #757575;
+    font-size: 13px;
+    color: var(--on-surface-dark);
+    opacity: 0.7;
 }
 
-/* Скрываем полосу прокрутки, но сохраняем функциональность */
-.app-grid::-webkit-scrollbar {
-    width: 0;
-    background: transparent;
+.web-app-installer {
+    background-color: var(--surface-dark);
+    padding: 15px;
+    border-radius: 12px;
+    margin: 15px 0;
 }
 
-/* Обновление стилей для более современного Android-дизайна */
-:root {
-    --primary-color: #4285F4;
-    --accent-color: #EA4335;
-    --background-dark: #121212;
-    --surface-dark: #1E1E1E;
-    --on-surface-dark: #E0E0E0;
-    --md-elevation-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    --md-elevation-2: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-    --md-elevation-3: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+.web-app-installer input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--on-surface-dark);
+    font-size: 14px;
 }
 
-/* Стили для Play Market */
-.playmarket-header {
-    background-color: #01875f;
+.web-app-installer input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
 }
 
-/* Стили для Material кнопок */
-button {
-    border-radius: 4px;
+.web-app-installer button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 14px;
     font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.web-app-installer button:hover {
+    background-color: #1976D2;
+}
+
+/* Обновленные стили для заголовка Play Market */
+.playmarket-header {
+    background-color: var(--surface-dark);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.playmarket-header h2 {
+    color: var(--on-surface-dark);
 }
 
 /* Стили для голосовых сообщений */

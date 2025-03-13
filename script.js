@@ -2312,73 +2312,103 @@ function initSnakeGame() {
 
 // Функция инициализации Play Market
 function initPlayMarket() {
-    const webAppUrl = document.getElementById('webAppUrl');
-    const webAppName = document.getElementById('webAppName');
-    const installButton = document.getElementById('installWebApp');
     const searchInput = document.querySelector('.search-input');
+    const searchHistory = document.querySelector('.search-history');
+    const webAppInstaller = document.querySelector('.web-app-installer');
+    const urlInput = document.querySelector('.web-app-url');
+    const nameInput = document.querySelector('.web-app-name');
+    const installButton = document.getElementById('installWebApp');
 
-    // Обработчик установки веб-приложения
-    installButton.addEventListener('click', () => {
-        const url = webAppUrl.value.trim();
-        const name = webAppName.value.trim();
-
-        if (!url || !name) {
-            sendPushNotification('Play Market', 'Введите URL и название приложения', '<span class="material-symbols-outlined">error</span>');
-            return;
-        }
-
-        installWebApp(url, name);
-    });
-
-    // Обработчик для рекомендуемых приложений
+    // Обработка рекомендованных приложений
     document.querySelectorAll('.recommended-app').forEach(app => {
         app.addEventListener('click', () => {
             const url = app.getAttribute('data-url');
             const name = app.querySelector('.app-title').textContent;
-            const icon = app.querySelector('img').src;
             
-            // Показываем уведомление об установке
-            sendPushNotification('Play Market', `Установка ${name}...`, '<span class="material-symbols-outlined">download</span>');
+            // Если это эмулятор
+            if (url.includes('emu.html')) {
+                sendPushNotification(
+                    'Play Market',
+                    'Скачивание эмулятора...',
+                    '<span class="material-symbols-outlined">download</span>'
+                );
+                
+                setTimeout(() => {
+                    window.location.href = 'emu/emu.html';
+                    sendPushNotification(
+                        'Play Market',
+                        'Запуск эмулятора...',
+                        '<span class="material-symbols-outlined">launch</span>'
+                    );
+                }, 1500);
+                return;
+            }
             
-            // Устанавливаем приложение
-            setTimeout(() => {
-                installWebApp(url, name);
-            }, 1500);
+            // Для остальных приложений
+            installWebApp(url, name);
         });
     });
 
-    // Обработчик ввода в поле поиска
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const searchText = searchInput.value.trim();
-            if (searchText) {
-                // Добавляем новый поиск в историю
-                const searchHistory = document.querySelector('.search-history');
-                const newSearchItem = document.createElement('div');
-                newSearchItem.className = 'search-item';
-                newSearchItem.innerHTML = `
-                    <i class="fas fa-history"></i>
-                    <span>${searchText}</span>
-                `;
+    // Обработка поискового ввода
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase();
+        
+        // Если ищут эмулятор
+        if (query.includes('эмулятор') || query.includes('телефон') || query.includes('первоклассник')) {
+            const searchItem = document.createElement('div');
+            searchItem.className = 'search-item';
+            searchItem.innerHTML = `
+                <i class="material-symbols-outlined">phone_android</i>
+                <span>Эмулятор Телефона Первоклассника</span>
+            `;
+            searchHistory.innerHTML = '';
+            searchHistory.appendChild(searchItem);
+            
+            searchItem.addEventListener('click', () => {
+                sendPushNotification(
+                    'Play Market',
+                    'Скачивание эмулятора...',
+                    '<span class="material-symbols-outlined">download</span>'
+                );
                 
-                // Добавляем в начало списка
-                searchHistory.insertBefore(newSearchItem, searchHistory.firstChild);
-                
-                // Показываем уведомление
                 setTimeout(() => {
-                    if (searchText.toLowerCase().includes('взлом') || 
-                        searchText.toLowerCase().includes('чит') || 
-                        searchText.toLowerCase().includes('бесплатно') ||
-                        searchText.toLowerCase().includes('без вирусов')) {
-                        sendPushNotification('Play Market', 'Приложение не найдено или содержит вирусы', '<span class="material-symbols-outlined">error</span>');
-                    } else {
-                        sendPushNotification('Play Market', 'Для скачивания требуется разрешение родителей', '<span class="material-symbols-outlined">lock</span>');
-                    }
-                }, 1000);
-                
-                // Очищаем поле ввода
-                searchInput.value = '';
-            }
+                    window.location.href = 'emu/emu.html';
+                }, 1500);
+            });
+            return;
+        }
+
+        // Для других поисковых запросов
+        if (query.includes('hack') || query.includes('взлом') || query.includes('чит')) {
+            searchHistory.innerHTML = '';
+            sendPushNotification(
+                'Play Market',
+                'Приложение не найдено или может содержать вирусы',
+                '<span class="material-symbols-outlined">warning</span>'
+            );
+            return;
+        }
+
+        if (query.length > 0) {
+            searchHistory.innerHTML = '';
+            sendPushNotification(
+                'Play Market',
+                'Для скачивания приложения требуется разрешение родителей',
+                '<span class="material-symbols-outlined">family_history</span>'
+            );
+        }
+    });
+
+    // Обработка установки веб-приложения
+    installButton.addEventListener('click', () => {
+        const url = urlInput.value;
+        const name = nameInput.value;
+        
+        if (url && name) {
+            installWebApp(url, name);
+            urlInput.value = '';
+            nameInput.value = '';
+            webAppInstaller.style.display = 'none';
         }
     });
 }

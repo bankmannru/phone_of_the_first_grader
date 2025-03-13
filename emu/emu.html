@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Эмулятор Телефона Первоклассника</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script type="importmap">
+      {
+        "imports": {
+          "@material/web/": "https://esm.run/@material/web/"
+        }
+      }
+    </script>
+    <script type="module">
+      import '@material/web/all.js';
+      import {styles as typescaleStyles} from '@material/web/typography/md-typescale-styles.js';
+  
+      document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
+    </script>
+    <style>
+        :root {
+            --primary-color: #2196F3;
+            --surface-dark: #1F1F1F;
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .settings-container {
+            background-color: var(--surface-dark);
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+
+        .settings-group {
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .settings-group h2 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .setting-item:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .setting-item label {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .setting-item input[type="text"],
+        .setting-item input[type="number"] {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            color: var(--text-primary);
+            margin-left: 10px;
+            transition: background-color 0.3s;
+            width: 120px;
+        }
+
+        .setting-item input[type="text"]:focus,
+        .setting-item input[type="number"]:focus {
+            background-color: rgba(255, 255, 255, 0.15);
+            outline: none;
+        }
+
+        .setting-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-left: 10px;
+            accent-color: var(--primary-color);
+        }
+
+        .start-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .start-button:hover {
+            background-color: #1976D2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .start-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        #emulatorContainer {
+            display: none;
+        }
+
+        .phone-frame {
+            background-color: #2C2C2C;
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .timer-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 1000;
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .settings-saved {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="settings-container" id="settingsContainer">
+        <h1>Настройки Эмулятора</h1>
+        
+        <div class="settings-group">
+            <h2>Основные настройки</h2>
+            <div class="setting-item">
+                <label>Имя ребенка</label>
+                <input type="text" id="childName" value="Ученик" maxlength="20">
+            </div>
+            <div class="setting-item">
+                <label>Класс</label>
+                <input type="number" id="grade" value="1" min="1" max="4">
+            </div>
+        </div>
+
+        <div class="settings-group">
+            <h2>Ограничения</h2>
+            <div class="setting-item">
+                <label>Включить родительский контроль</label>
+                <input type="checkbox" id="parentalControl" checked>
+            </div>
+            <div class="setting-item">
+                <label>Ограничить время использования (минут)</label>
+                <input type="number" id="timeLimit" value="30" min="5" max="120">
+            </div>
+        </div>
+
+        <div class="settings-group">
+            <h2>Дополнительно</h2>
+            <div class="setting-item">
+                <label>Включить обучающие подсказки</label>
+                <input type="checkbox" id="enableTutorial" checked>
+            </div>
+            <div class="setting-item">
+                <label>Включить звуковые эффекты</label>
+                <input type="checkbox" id="enableSounds" checked>
+            </div>
+        </div>
+
+        <button class="start-button" onclick="startEmulator()">Запустить эмулятор</button>
+    </div>
+
+    <div id="emulatorContainer">
+        <div id="timerDisplay" class="timer-display">
+            Осталось: <span id="timeRemaining">30:00</span>
+        </div>
+        <div id="notification" class="notification"></div>
+        <div class="settings-saved" id="settingsSaved">Настройки сохранены</div>
+        <div class="phone-frame">
+            <iframe id="emulatorFrame" src="../index.html" width="360" height="780" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <script>
+        let timerInterval;
+        const blockedApps = ['whatsapp', 'instagram', 'telegram', 'tiktok', 'facebook'];
+        
+        // Функция для сохранения настроек
+        function saveSettings() {
+            const settings = {
+                childName: document.getElementById('childName').value,
+                grade: parseInt(document.getElementById('grade').value),
+                parentalControl: document.getElementById('parentalControl').checked,
+                timeLimit: parseInt(document.getElementById('timeLimit').value),
+                enableTutorial: document.getElementById('enableTutorial').checked,
+                enableSounds: document.getElementById('enableSounds').checked,
+                lastUsed: Date.now()
+            };
+
+            localStorage.setItem('emulatorSettings', JSON.stringify(settings));
+            showSettingsSaved();
+        }
+
+        // Показать уведомление о сохранении настроек
+        function showSettingsSaved() {
+            const notification = document.getElementById('settingsSaved');
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 2000);
+        }
+
+        function startEmulator() {
+            saveSettings();
+            const settings = JSON.parse(localStorage.getItem('emulatorSettings'));
+            
+            // Применяем настройки к эмулятору
+            applySettings(settings);
+
+            // Показываем эмулятор
+            document.getElementById('settingsContainer').style.display = 'none';
+            document.getElementById('emulatorContainer').style.display = 'block';
+
+            // Запускаем таймер если включено ограничение
+            if (settings.timeLimit > 0) {
+                startTimer(settings.timeLimit);
+                document.getElementById('timerDisplay').style.display = 'block';
+            }
+
+            // Отправляем настройки в основное приложение
+            const frame = document.getElementById('emulatorFrame');
+            frame.onload = () => {
+                frame.contentWindow.postMessage({ type: 'settings', data: settings }, '*');
+            };
+        }
+
+        function applySettings(settings) {
+            if (settings.parentalControl) {
+                blockRestrictedApps();
+            }
+
+            if (settings.enableTutorial) {
+                showTutorial();
+            }
+
+            if (!settings.enableSounds) {
+                muteSounds();
+            }
+
+            // Применяем имя ребенка
+            const frame = document.getElementById('emulatorFrame');
+            frame.contentWindow.postMessage({ 
+                type: 'updateProfile',
+                data: { name: settings.childName, grade: settings.grade }
+            }, '*');
+        }
+
+        function blockRestrictedApps() {
+            const frame = document.getElementById('emulatorFrame');
+            frame.contentWindow.postMessage({ 
+                type: 'blockApps',
+                data: { apps: blockedApps }
+            }, '*');
+        }
+
+        function showTutorial() {
+            showNotification('Проведите по экрану для разблокировки');
+            setTimeout(() => {
+                showNotification('Нажмите на иконку приложения, чтобы открыть его');
+            }, 5000);
+        }
+
+        function muteSounds() {
+            const frame = document.getElementById('emulatorFrame');
+            frame.contentWindow.postMessage({ type: 'mute' }, '*');
+        }
+
+        function startTimer(minutes) {
+            const endTime = Date.now() + minutes * 60 * 1000;
+            
+            timerInterval = setInterval(() => {
+                const remainingTime = Math.max(0, endTime - Date.now());
+                const remainingMinutes = Math.floor(remainingTime / 60000);
+                const remainingSeconds = Math.floor((remainingTime % 60000) / 1000);
+                
+                document.getElementById('timeRemaining').textContent = 
+                    `${remainingMinutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+                
+                if (remainingTime <= 300000 && remainingTime > 299000) { // 5 минут
+                    showNotification('Осталось 5 минут!');
+                }
+                
+                if (remainingTime <= 0) {
+                    clearInterval(timerInterval);
+                    showNotification('Время использования истекло!');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                }
+            }, 1000);
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Обработка сообщений от основного приложения
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'appLaunch') {
+                const settings = JSON.parse(localStorage.getItem('emulatorSettings'));
+                if (settings.parentalControl && blockedApps.includes(event.data.app)) {
+                    showNotification('Это приложение заблокировано родительским контролем');
+                    event.preventDefault();
+                }
+            }
+        });
+
+        // Автосохранение настроек при изменении
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('change', saveSettings);
+        });
+
+        // Загрузка сохраненных настроек
+        window.onload = function() {
+            const savedSettings = localStorage.getItem('emulatorSettings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                document.getElementById('childName').value = settings.childName;
+                document.getElementById('grade').value = settings.grade;
+                document.getElementById('parentalControl').checked = settings.parentalControl;
+                document.getElementById('timeLimit').value = settings.timeLimit;
+                document.getElementById('enableTutorial').checked = settings.enableTutorial;
+                document.getElementById('enableSounds').checked = settings.enableSounds;
+            }
+        };
+    </script>
+</body>
+</html>
